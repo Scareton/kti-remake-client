@@ -69,7 +69,7 @@ export default {
 .news-snippet .news-items {
   display: flex;
   flex-wrap: wrap;
-  margin: 0 -12px;
+  margin: 0 -6px;
 }
 .news-snippet .news-items .news-item {
   flex: 1 1 33%;
