@@ -2,9 +2,9 @@
   <div class="news-snippet">
     <div class="headline">Новости института</div>
     <div class="news-items">
-      <div class="news-item" v-for="(item, index) in news" :key="index">
+      <div class="news-item" v-for="item in news" :key="item._id">
         <div class="news-item-wrapper">
-          <v-img :src="item.image"></v-img>
+          <v-img :src="item.image" v-if="item.image"></v-img>
           <div class="news-item-body">
             <div class="caption font-weight-bold">{{item.tag}}</div>
             <div class="font-weight-bold body-2" style="margin: 6px auto;">{{item.title}}</div>
@@ -13,52 +13,39 @@
         </div>
       </div>
     </div>
+    <div>
+      <!-- TODO загрузка статей по скроллу -->
+      <v-btn @click="increaseOffset">Загрузить ещё</v-btn>
+    </div>
   </div>
 </template>
 
 <script>
+// TODO (возможно) Кеширование статей во vuex для быстрой загрузки в других разделах 
+// TODO (возможно) Унифицировать данный компонент для вывода разных типов статей. Путь выбирать пропом
+import PostsService from "@/services/PostsService";
 export default {
   name: "NewsSnippet",
   data: () => ({
-    news: [
-      {
-        title:
-          "13 февраля состоится расширенное заседание директората института",
-        description:
-          "13 февраля 2020 года (четверг) в аудитории 2.11 корпуса «Б» в 14:30 состоится расширенное заседание директората института (приглашаются заведующие кафедрами)",
-        publishedby: "",
-        tag: "Информация",
-        image: "test/slide_1.jpg"
-      },
-      {
-        title:
-          "13 февраля состоится расширенное заседание директората института",
-        description:
-          "13 февраля 2020 года (четверг) в аудитории 2.11 корпуса «Б» в 14:30 состоится расширенное заседание директората института (приглашаются заведующие кафедрами)",
-        publishedby: "",
-        tag: "Информация",
-        image: "test/slide_1.jpg"
-      },
-      {
-        title:
-          "13 февраля состоится расширенное заседание директората института",
-        description:
-          "13 февраля 2020 года (четверг) в аудитории 2.11 корпуса «Б» в 14:30 состоится расширенное заседание директората института (приглашаются заведующие кафедрами)",
-        publishedby: "",
-        tag: "Информация",
-        image: "test/slide_1.jpg"
-      },
-      {
-        title:
-          "13 февраля состоится расширенное заседание директората института",
-        description:
-          "13 февраля 2020 года (четверг) в аудитории 2.11 корпуса «Б» в 14:30 состоится расширенное заседание директората института (приглашаются заведующие кафедрами)",
-        publishedby: "",
-        tag: "Информация",
-        image: "test/slide_1.jpg"
-      }
-    ]
-  })
+    news: [],
+    offset: 0,
+    limit: 3,
+    path: "/news/"
+  }),
+  methods: {
+    getPosts() {
+      PostsService.getPostsOffset(this.path, this.offset, this.limit).then(response => {
+        this.news = this.news.concat(response.data.posts)
+      })
+    },
+    increaseOffset() {
+      this.offset += this.limit;
+      this.getPosts();
+    }
+  },
+  created() {
+    this.getPosts();
+  }
 };
 </script>
 

@@ -1,0 +1,68 @@
+<template>
+  <div class="posts">
+    <v-container>
+      <v-row>
+        <v-col cols="2">
+          <navigation-menu :items="siblings"></navigation-menu>
+        </v-col>
+        <v-col cols="10">
+          <div class="article" v-if="post" v-html="post.content"></div>
+          <div class="post-forms" v-if="post && post.forms">
+            <div class="post-form" v-for="(form, index) in post.forms" :key="index">
+              <template v-if="form === 'CallbackForm'">
+                <callback-form></callback-form>
+              </template>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
+</template>
+
+<script>
+// TODO Добавить фотогалерею в cms
+import PostsService from "@/services/PostsService";
+export default {
+  components: {
+    NavigationMenu: () => import("../components/navigation/NavigationMenu"),
+    CallbackForm: () => import("../components/forms/CallbackForm")
+  },
+  data: () => ({
+    post: null,
+    siblings: null
+  }),
+  methods: {
+    getPost() {
+      let path = this.$route.path;
+      // if (path[path.length - 1] !== "/") path += "/";
+      PostsService.getPost(path).then(response => {
+        this.post = response.data.post;
+        this.siblings = response.data.posts;
+      });
+    }
+  },
+  watch: {
+    $route: {
+      handler() {
+        this.getPost();
+      },
+      immediate: true
+    }
+  }
+};
+</script>
+
+<style>
+.article img {
+  max-width: 100%;
+  margin: 12px;
+}
+.post-forms {
+  margin-top: 32px;
+}
+.post-form {
+  padding: 16px;
+  box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.12);
+}
+</style>
