@@ -14,7 +14,6 @@
       </div>
     </div>
     <div>
-      <!-- TODO загрузка статей по скроллу -->
       <v-btn @click="increaseOffset">Загрузить ещё</v-btn>
     </div>
   </div>
@@ -33,17 +32,27 @@ export default {
     path: "/news/"
   }),
   methods: {
+    /**
+     * Запросить статьи с сервера
+     */
     getPosts() {
+      // Указываем путь (раздел), отступ и лимит для подгрузки статей
+      // TODO Сделать загрузку статей по скроллу страницы
       PostsService.getPostsOffset(this.path, this.offset, this.limit).then(response => {
+        // Добавляем полученные статьи к уже имеющимся
         this.news = this.news.concat(response.data.posts)
       })
     },
+    /**
+     * Запросить новые статьи, увеличив отступ
+     */
     increaseOffset() {
       this.offset += this.limit;
       this.getPosts();
     }
   },
   created() {
+    // При открытии страницы запрашиваем первые посты
     this.getPosts();
   }
 };

@@ -33,11 +33,16 @@ export default {
     siblings: null
   }),
   methods: {
+    /**
+     * Запросить пост и его соседние посты с сервера
+     */
     getPost() {
       let path = this.$route.path;
-      // if (path[path.length - 1] !== "/") path += "/";
+      // TODO Есть неожиданная реакция на наличие\отсутствие слеша в конце строки
       PostsService.getPost(path).then(response => {
+        // Полученная страница
         this.post = response.data.post;
+        // Полученные соседи
         this.siblings = response.data.posts;
       });
     }
@@ -45,8 +50,10 @@ export default {
   watch: {
     $route: {
       handler() {
+        // При изменении адреса запрашиваем посты заново
         this.getPost();
       },
+      // Запросить посты при первом открытии страницы
       immediate: true
     }
   }
