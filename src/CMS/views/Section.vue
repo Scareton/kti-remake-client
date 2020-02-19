@@ -7,7 +7,7 @@
       </v-col>
       <v-col cols="10">
         <div v-if="post" class="cms_post">
-          <v-text-field label="Заголовок документа" v-model="post.title"></v-text-field>
+          <v-text-field label="Заголовок документа" v-model="post.title" :counter="80"></v-text-field>
           <v-text-field label="Alias документа" v-model="post.alias"></v-text-field>
           <v-text-field label="Родитель документа" v-model="post.path"></v-text-field>
           <v-text-field label="Ссылка на документ" v-model="post.fullpath" readonly></v-text-field>
@@ -35,8 +35,9 @@
 </template>
 
 <script>
-// TODO Добавить функцию транслитезации названия статьи для генерации alias
+// TODO Проверка длины title и alias на сервере
 import PostsService from "@/services/PostsService";
+import { transliterate as tr, slugify } from 'transliteration';
 import "tinymce/tinymce";
 import "tinymce/themes/silver";
 export default {
@@ -92,7 +93,8 @@ export default {
             this.mode = "create";
             this.post = new Object({
               title: "",
-              content: ""
+              content: "",
+              path: "",
             });
 
             // Помечаем, что документ, полученный из бызы, не нужно помечать активным 
@@ -125,6 +127,7 @@ export default {
       handler(value) {
         // Полный путь к документу вычисляется при сложении пути к родителю и alias
         this.$set(this.post, 'fullpath', value.path + value.alias);
+        this.$set(this.post, 'alias', slugify(this.post.title))
       },
       deep: true
     }
