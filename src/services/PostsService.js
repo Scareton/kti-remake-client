@@ -9,6 +9,9 @@ export default {
   getPostsOffset(path, offset, limit) {
     return api().get(`${path}?offset=${offset}&limit=${limit}`);
   },
+  getPostsCount(path) {
+    return api().get(`${path}?count=true`)
+  },
   createPost(path, post) {
     return api().post(path, post);
   },

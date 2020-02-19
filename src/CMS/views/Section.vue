@@ -35,6 +35,7 @@
 </template>
 
 <script>
+// TODO Добавить функцию транслитезации названия статьи для генерации alias
 import PostsService from "@/services/PostsService";
 import "tinymce/tinymce";
 import "tinymce/themes/silver";

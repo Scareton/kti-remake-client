@@ -63,7 +63,7 @@ export default {
 <style>
 .article img {
   max-width: 100%;
-  margin: 12px;
+  padding: 12px;
 }
 .post-forms {
   margin-top: 32px;
