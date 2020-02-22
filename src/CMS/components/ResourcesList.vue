@@ -19,7 +19,10 @@ export default {
     createResource() {
       // Для создания ресурса переходим к текущему разделу (Убираем выбранный пост из пути)
       // TODO Учитывать слеш в конце пути
-      let path = this.$route.path.replace(/(\w+)$/, "");
+      let path = this.$route.path;
+      if (path !== "/cms" && path !== "/cms/") path = path.replace(/([^\/]+)$/, "");
+      else path = "/cms/news/";
+      console.log(path)
       this.$router
         .push({ path: path, query: { mode: "create" } })
         .catch(err => {

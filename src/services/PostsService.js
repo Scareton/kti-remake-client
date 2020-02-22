@@ -1,8 +1,8 @@
 import api from "@/services/api";
 export default {
-  fetchPosts() {
-    return api().get("posts/");
-  },
+  // fetchPosts() {
+  //   return api().get("posts/");
+  // },
   getPost(path) {
     return api().get(`${path}`)
   },
@@ -13,12 +13,15 @@ export default {
     return api().get(`${path}?count=true`)
   },
   createPost(path, post) {
-    return api().post(path, post);
+    return api().post(path, {post});
   },
   updatePost(path, post) {
     return api().put(path, post);
   },
   getSections() {
     return api().get("sections")
+  },
+  getNavigation(sections) {
+    return api().get(`/navigation?sections=${sections}`)
   }
 };

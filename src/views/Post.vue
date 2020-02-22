@@ -63,6 +63,9 @@ export default {
 <style>
 .article img {
   max-width: 100%;
+  width:100%;
+  height: 100%;
+  object-fit: contain;
   padding: 12px;
 }
 .post-forms {

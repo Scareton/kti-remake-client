@@ -2,7 +2,7 @@
   <div class="footer">
     <v-container>
       <v-row class="caption">
-        <v-col cols="3" class="">
+        <v-col cols="3" class>
           <p class="title">© 2004 — 2020</p>
           <p class="overline">403874 Волгоградская обл., г. Камышин, ул. Ленина 6а</p>
           <p>
@@ -31,40 +31,16 @@
             <a href="mailto:kti@kti.ru">kti@kti.ru</a>
           </p>
         </v-col>
-        <v-col cols="3" class="psmallmg">
-          <p class="title">Образование</p>
-          <p><router-link to=" ">Высшее образование</router-link></p>
-          <p><router-link to=" ">Среднее профессиональное образование</router-link></p>
-          <p><router-link to=" ">Второе высшее образование</router-link></p>
-          <p><router-link to=" ">Профессиональная переподготовка и повышение квалификации</router-link></p>
-          <p><router-link to=" ">Восстановление и перевод</router-link></p>
-          <p><router-link to=" ">IT школа «Камышонок»</router-link></p>
-        </v-col>
-        <v-col cols="3" class="psmallmg">
-          <p class="title">Об институте</p>
-          <p><router-link to=" ">Структура</router-link></p>
-          <p><router-link to=" ">Администрация</router-link></p>
-          <p><router-link to=" ">Нормативные документы</router-link></p>
-          <p><router-link to=" ">Электронные сервисы</router-link></p>
-          <p><router-link to=" ">Виртуальная приемная</router-link></p>
-          <p><router-link to=" ">Контактная информация</router-link></p>
-          <p><router-link to=" ">История института</router-link></p>
-          <p><router-link to=" ">Клуб выпускников</router-link></p>
-          <p><router-link to=" ">СМИ о нас</router-link></p>
-          <p><router-link to=" ">Институту 20 лет</router-link></p>
-          <p><router-link to=" ">Институту 25 лет</router-link></p>
-        </v-col>
-        <v-col cols="3" class="psmallmg">
-          <p class="title">Наука</p>
-          <p><router-link to=" ">Научные труды сотрудников</router-link></p>
-          <p><router-link to=" ">Основные направления</router-link></p>
-          <p><router-link to=" ">Каталог научных услуг</router-link></p>
-          <p><router-link to=" ">Разработки учёных института</router-link></p>
-          <p><router-link to=" ">Руководство НИС</router-link></p>
-          <p><router-link to=" ">Конференции</router-link></p>
-          <p><router-link to=" ">Нормативная база</router-link></p>
-          <p><router-link to=" ">Полезные ссылки</router-link></p>
-          <p><router-link to=" ">Студенческое научно-техническое общество</router-link></p>
+        <v-col cols="9">
+          <v-row>
+            <!-- Динамический вывод разделов. Разделы определяются в переменной sections -->
+            <v-col class="psmallmg" v-for="(section, index) in sections" :key="index">
+              <p class="title">{{section.name}}</p>
+              <p v-for="(post, key) in section.posts" :key="key">
+                <router-link :to="post.fullpath">{{post.title}}</router-link>
+              </p>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-container>
@@ -72,8 +48,52 @@
 </template>
 
 <script>
+import PostsService from "@/services/PostsService";
 export default {
-  name: "Footer"
+  data: () => ({
+    sections: {
+      education: {
+        name: "Образование",
+        path: "/education/",
+        posts: []
+      },
+      about: {
+        name: "Об институте",
+        path: "/about/",
+        posts: []
+      },
+      science: {
+        name: "Наука",
+        path: "/science/",
+        posts: []
+      }
+    }
+  }),
+  methods: {
+    getPosts() {
+      // Формируем строку вида "/science/,/education/,/about/" для запроса документов по разделам
+      let sectionsString = "";
+      sectionsString = Object.keys(this.sections)
+        .map(key => this.sections[key].path)
+        .join(",");
+
+      // Выполняем запрос по разделам
+      PostsService.getNavigation(sectionsString).then(response => {
+        if (response.data) {
+          var posts = response.data.posts;
+
+          // Заполняем массивы документов по разделам
+          for (let key in this.sections) {
+            let item = this.sections[key];
+            item.posts = posts.filter(post => post.path === item.path);
+          }
+        }
+      });
+    }
+  },
+  created() {
+    this.getPosts();
+  }
 };
 </script>
 
