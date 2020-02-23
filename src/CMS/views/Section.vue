@@ -11,7 +11,16 @@
 
           <v-row>
             <v-col>
-              <v-text-field label="Alias документа" v-model="post.alias" :rules="[rules.aliasCounter, rules.alias]"></v-text-field>
+              <v-text-field label="Alias документа" v-model="post.alias" :rules="[rules.aliasCounter, rules.alias]">
+                <template v-slot:append>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{on}">
+                      <v-icon v-on="on" @click="reloadAlias">mdi-reload</v-icon>
+                    </template>
+                    <span>Сгенерировать alias</span>
+                  </v-tooltip>
+                </template>
+              </v-text-field>
             </v-col>
 
             <v-col>
@@ -38,7 +47,7 @@
           <div v-if="post.path === '/news/'">
             <v-row>
               <v-col>
-                <v-file-input @change="postCoverLoaded" v-model="post.cover" :rules="rules.image" accept="image/png, image/jpeg, image/bmp" placeholder="Загрузите обложку для новости" prepend-icon="mdi-camera" label="Обложка"></v-file-input>
+                <v-file-input @change="postCoverLoaded" :rules="rules.image" accept="image/png, image/jpeg, image/bmp" placeholder="Загрузите обложку для новости" prepend-icon="mdi-camera" label="Обложка"></v-file-input>
                 <div v-if="postCover" style="max-width:260px;">
                   <v-img :src="postCover" />
                 </div>
@@ -135,7 +144,7 @@ export default {
     updateResource(e, doc) {
       let formdata = new FormData();
       for (var key in this.post) {
-        console.log(key, this.post[key])
+        console.log(key, this.post[key]);
         formdata.append(key, this.post[key]);
       }
       // Получаем путь к странице без префикса cms
@@ -154,6 +163,7 @@ export default {
       });
     },
     postCoverLoaded(file) {
+      this.post.cover = file;
       if (FileReader && file) {
         var fr = new FileReader();
         fr.onload = () => {
@@ -161,6 +171,12 @@ export default {
         };
         fr.readAsDataURL(file);
       }
+    },
+    /**
+     * Сгенерировать alias на основе title
+     */
+    reloadAlias() {
+      this.$set(this.post, "alias", slugify(this.post.title));
     }
   },
   watch: {
@@ -203,7 +219,11 @@ export default {
             this.post = null;
             if (response.data.post) {
               this.post = response.data.post;
-              this.postCover = response.data.post.cover;
+
+              if (response.data.post.cover) {
+                // Получаем обложку новости и добавляем к ней адрес сервера
+                this.postCover = `${this.SERVER}${response.data.post.cover}`;
+              }
               // И отмечаем, что документ редактируется
               this.mode = "edit";
             }

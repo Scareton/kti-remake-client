@@ -5,6 +5,8 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 Vue.config.productionTip = false;
 
+Vue.prototype.SERVER = 'http://localhost:8081/';
+
 new Vue({
   router,
   store,

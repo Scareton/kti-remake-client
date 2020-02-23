@@ -6,6 +6,9 @@
         <div class="news-item-wrapper">
           <v-img :src="item.image" v-if="item.image"></v-img>
           <div class="news-item-body">
+            <div v-if="item.cover" class="news-item-cover">
+              <v-img :src="SERVER + item.cover" aspect-ratio="1.7"/>
+            </div>
             <div class="caption font-weight-bold">{{item.tag}}</div>
             <div class="font-weight-bold body-2" style="margin: 6px auto;">{{item.title}}</div>
             <div class="body-2">{{item.description}}</div>
@@ -39,11 +42,9 @@ export default {
   }),
   methods: {
     getCount() {
-      PostsService.getPostsCount(this.path).then(
-        response => {
-          this.count = response.data.count
-        }
-      );
+      PostsService.getPostsCount(this.path).then(response => {
+        this.count = response.data.count;
+      });
     },
     /**
      * Запросить статьи с сервера
@@ -126,5 +127,10 @@ export default {
 
 .news-snippet .news-items .news-item .news-item-wrapper:hover {
   box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.25);
+}
+.news-snippet .news-items .news-item .news-item-cover {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
 }
 </style>
