@@ -13,7 +13,7 @@ export default {
     return api().get(`${path}?count=true`)
   },
   createPost(path, post) {
-    return api().post(path, {post});
+    return api().post(path, post);
   },
   updatePost(path, post) {
     return api().put(path, post);

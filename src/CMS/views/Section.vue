@@ -24,7 +24,7 @@
             </v-col>
 
             <v-col>
-              <v-text-field label="Родитель документа" v-model="post.path"></v-text-field>
+              <v-select :items="sections" label="Родитель документа" v-model="post.path"></v-select>
             </v-col>
 
             <v-col>
@@ -47,13 +47,16 @@
           <div v-if="post.path === '/news/'">
             <v-row>
               <v-col>
-                <v-file-input @change="postCoverLoaded" :rules="rules.image" accept="image/png, image/jpeg, image/bmp" placeholder="Загрузите обложку для новости" prepend-icon="mdi-camera" label="Обложка"></v-file-input>
+                <v-file-input @change="postCoverLoaded" v-model="uploadedCoverFile" :rules="rules.image" accept="image/png, image/jpeg, image/bmp" placeholder="Загрузите обложку для новости" prepend-icon="mdi-camera" label="Обложка"></v-file-input>
                 <div v-if="postCover" style="max-width:260px;">
                   <v-img :src="postCover" />
                 </div>
               </v-col>
               <v-col>
-                <v-text-field label="Раздел новости" v-model="post.tag"></v-text-field>
+                <v-select :items="tags" label="Раздел новости" v-model="post.tag"></v-select>
+              </v-col>
+              <v-col v-if="post.tag">
+                <v-combobox :items="subtags" label="Подраздел новости" :search-input.sync="post.subtag"></v-combobox>
               </v-col>
             </v-row>
             <v-textarea label="Описание документа (Краткое превью)" v-model="post.description"></v-textarea>
@@ -103,6 +106,7 @@ import PostsService from "@/services/PostsService";
 import { transliterate as tr, slugify } from "transliteration";
 import "tinymce/tinymce";
 import "tinymce/themes/silver";
+import { mapState } from "vuex";
 export default {
   components: {
     SectionsList: () => import("@/CMS/components/SectionsList"),
@@ -113,8 +117,30 @@ export default {
     posts: Array,
     post: null,
     postCover: null,
+    uploadedCoverFile: null,
     siblings: null,
     mode: null,
+    tags: [
+      "Институт",
+      "Студенческая жизнь",
+      "Спорт",
+      "Наука",
+      "Трудоустройство"
+    ], // TODO Получать теги с сервера?
+    subtags: [
+      "Информация профбюро студентов",
+      "Информация",
+      "КВН",
+      "Важная информация",
+      "Праздник",
+      "Конкурс",
+      "Наши достижения",
+      "Культура",
+      "Мероприятие",
+      "Волонтёры победы",
+      "Студенческое телевидение",
+      "Молодёжная политика"
+    ],
     rules: {
       alias: value => {
         const pattern = /^(?! )(?!.* $)[a-z0-9 -]*/;
@@ -129,23 +155,31 @@ export default {
       ]
     }
   }),
+  computed: {
+    ...mapState({
+      sections: state => state.sections
+    })
+  },
   methods: {
     createResource(e, doc) {
+      let formdata = new FormData();
+      for (var key in doc) {
+        formdata.append(key, doc[key]);
+      }
       // Получаем путь к странице без префикса cms
       let path = this.$route.path.replace(/^(\/cms\/)/, "");
-      PostsService.createPost(path, this.post).then(response => {
+      PostsService.createPost(path, formdata).then(response => {
         // Если ответ положительный
         if (response.data.success) {
           // Переходим по ссылке на созданный документ в cms
-          this.$router.replace({ path: `/cms${this.post.fullpath}` });
+          this.$router.replace({ path: `/cms${response.data.post.fullpath}` });
         }
       });
     },
     updateResource(e, doc) {
       let formdata = new FormData();
-      for (var key in this.post) {
-        console.log(key, this.post[key]);
-        formdata.append(key, this.post[key]);
+      for (var key in doc) {
+        formdata.append(key, doc[key]);
       }
       // Получаем путь к странице без префикса cms
       let path = this.$route.path.replace(/^(\/cms\/)/, "");
@@ -182,6 +216,9 @@ export default {
   watch: {
     $route: {
       handler(value) {
+        // Обнуляем обложку
+        this.uploadedCoverFile = null;
+        this.postCover = null;
         // Получаем путь к странице без префикса cms
         let path = value.path.replace(/^(\/cms\/)/, "");
         // Если true - обновляем состояние на выбранный пост из базы
@@ -199,7 +236,8 @@ export default {
               alias: "",
               aliasGen: false,
               visible: false,
-              published: true
+              published: true,
+              subtag: null
             });
 
             // Помечаем, что документ, полученный из бызы, не нужно помечать активным

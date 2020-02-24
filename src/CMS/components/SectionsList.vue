@@ -4,9 +4,6 @@
     <div v-for="(item, index) in sections" :key="index">
       <router-link :to="`/cms${item}`">{{item}}</router-link>
     </div>
-    <!-- <div class="sections-list-buttons">
-      <v-btn small color="primary">Создать раздел</v-btn>
-    </div> -->
   </div>
 </template>
 
