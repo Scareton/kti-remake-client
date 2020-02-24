@@ -33,7 +33,7 @@
                   <v-text-field v-on="on" label="Ссылка на документ" v-model="post.fullpath" readonly></v-text-field>
                 </template>
                 <div>
-                  <span>Формируется на основе полей</span>
+                  <span>Формируется на основе полей&nbsp;</span>
                   <strong>alias</strong> и
                   <strong>родитель</strong>
                 </div>
@@ -64,15 +64,7 @@
 
           <div style="color: rgba(0, 0, 0, 0.6); font-size: 13px;">Содержание документа:</div>
 
-          <editor :init="{
-              height: 500,
-              browser_spellcheck: true,
-              language: 'ru', language_url: '/tinymce/langs/ru.js',
-              external_plugins: {
-                'code': '/tinymce/plugins/code/plugin.min.js',
-                'image': '/tinymce/plugins/image/plugin.min.js'
-              },
-           }" v-model="post.content"></editor>
+          <editor :init="tinymceinit" v-model="post.content"></editor>
 
           <div class="d-flex systemButtons">
             <v-tooltip bottom>
@@ -158,7 +150,93 @@ export default {
   computed: {
     ...mapState({
       sections: state => state.sections
-    })
+    }),
+    tinymceinit() {
+      return {
+        height: 500,
+        browser_spellcheck: true,
+        language: "ru",
+        language_url: "/tinymce/langs/ru.js",
+        external_plugins: {
+          code: "/tinymce/plugins/code/plugin.min.js",
+          image: "/tinymce/plugins/image/plugin.min.js",
+          media: "/tinymce/plugins/media/plugin.min.js",
+        },
+        media_live_embeds: true,
+        style_formats: [
+          {
+            title: "Изображение слева 40%",
+            selector: "img",
+            styles: {
+              float: "left",
+              padding: "0 10px 0 0",
+              width: '40%',
+            }
+          },
+          {
+            title: "Изображение справа 40%",
+            selector: "img",
+            styles: {
+              float: "right",
+              padding: "0 0 0 10px",
+              width: '40%',
+            }
+          },
+          {
+            title: "Изображение слева 50%",
+            selector: "img",
+            styles: {
+              float: "left",
+              padding: "0 10px 0 0",
+              width: '50%',
+            }
+          },
+          {
+            title: "Изображение справа 50%",
+            selector: "img",
+            styles: {
+              float: "right",
+              padding: "0 0 0 10px",
+              width: '50%',
+            }
+          }
+        ],
+        content_style: '*, ::before, ::after {-webkit-box-sizing: inherit;box-sizing: inherit;} html {box-sizing: border-box;} img {max-width: 100%; height: 100%; object-fit: cover;}',
+        // toolbar: 'undo redo | link image | code',
+        images_upload_handler: (blobInfo, success, failure) => {
+          var xhr, formData;
+
+          xhr = new XMLHttpRequest();
+          xhr.withCredentials = false;
+          xhr.open("POST", "http://localhost:8081/loadimage");
+
+          xhr.onload = () => {
+            var json;
+
+            if (xhr.status != 200) {
+              failure("HTTP Error: " + xhr.status);
+              return;
+            }
+
+            json = JSON.parse(xhr.responseText);
+
+            if (!json || typeof json.location != "string") {
+              failure("Invalid JSON: " + xhr.responseText);
+              return;
+            }
+
+            success("http:\\\\localhost:8081\\" + json.location);
+            // success(json.location);
+            this.post.images.push(json.location);
+          };
+
+          formData = new FormData();
+          formData.append("file", blobInfo.blob(), blobInfo.filename());
+
+          xhr.send(formData);
+        }
+      };
+    }
   },
   methods: {
     createResource(e, doc) {
@@ -237,7 +315,8 @@ export default {
               aliasGen: false,
               visible: false,
               published: true,
-              subtag: null
+              subtag: null,
+              images: []
             });
 
             // Помечаем, что документ, полученный из бызы, не нужно помечать активным
@@ -257,6 +336,7 @@ export default {
             this.post = null;
             if (response.data.post) {
               this.post = response.data.post;
+              this.post.images = [];
 
               if (response.data.post.cover) {
                 // Получаем обложку новости и добавляем к ней адрес сервера

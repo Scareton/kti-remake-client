@@ -2,19 +2,18 @@
   <div class="news-snippet">
     <div class="headline">Новости института</div>
     <div class="news-items" v-infinite-scroll="getPosts" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
-      <div class="news-item" v-for="item in news" :key="item._id">
+      <router-link class="news-item" v-for="item in news" :key="item._id" tag="div" :to="item.fullpath">
         <div class="news-item-wrapper">
-          <v-img :src="item.image" v-if="item.image"></v-img>
+          <div v-if="item.cover" class="news-item-cover">
+            <v-img :src="SERVER + item.cover" aspect-ratio="1.7" />
+          </div>
           <div class="news-item-body">
-            <div v-if="item.cover" class="news-item-cover">
-              <v-img :src="SERVER + item.cover" aspect-ratio="1.7"/>
-            </div>
             <div class="caption font-weight-bold">{{item.tag}}</div>
             <div class="font-weight-bold body-2" style="margin: 6px auto;">{{item.title}}</div>
             <div class="body-2">{{item.description}}</div>
           </div>
         </div>
-      </div>
+      </router-link>
     </div>
     <div style="margin-top: 16px;">
       <v-btn @click="increaseOffset" style="width:100%;" v-if="news.length < count">Загрузить больше новостей</v-btn>
@@ -116,6 +115,7 @@ export default {
   max-width: 33%;
   margin: 6px 0;
   padding: 0 6px;
+  cursor: pointer;
 }
 .news-snippet .news-items .news-item .news-item-wrapper {
   transition: all 0.2s ease-in-out;

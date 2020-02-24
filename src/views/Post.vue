@@ -7,7 +7,7 @@
         </v-col>
         <v-col cols="10">
           <div class="article" v-if="post" v-html="post.content"></div>
-          <div class="post-forms" v-if="post && post.forms">
+          <div class="post-forms" v-if="post && post.forms && post.forms[0]">
             <div class="post-form" v-for="(form, index) in post.forms" :key="index">
               <template v-if="form === 'CallbackForm'">
                 <callback-form></callback-form>
@@ -63,7 +63,6 @@ export default {
 <style>
 .article img {
   max-width: 100%;
-  width:100%;
   height: 100%;
   object-fit: contain;
   padding: 12px;
