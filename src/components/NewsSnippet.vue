@@ -120,6 +120,7 @@ export default {
 .news-snippet .news-items .news-item .news-item-wrapper {
   transition: all 0.2s ease-in-out;
   border: 1px solid #e4e4e4;
+  height: 100%;
 }
 .news-snippet .news-items .news-item .news-item-body {
   padding: 9px;
@@ -130,7 +131,6 @@ export default {
 }
 .news-snippet .news-items .news-item .news-item-cover {
   width: 100%;
-  height: 200px;
   overflow: hidden;
 }
 </style>
