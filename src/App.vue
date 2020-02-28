@@ -67,7 +67,6 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
 }
 .app-content {
   flex: 1;

@@ -1,0 +1,12 @@
+import api from "@/services/api";
+export default {
+  getAlbums() {
+    return api().get('photo/albums/')
+  },
+  getAlbumPhotos(path) {
+    return api().get(`photo/albums/${path}`)
+  },
+  uploadAlbumPhotos(path, body) {
+    return api().post(`photo/albums/${path}`, body)
+  }
+};

@@ -1,5 +1,9 @@
 <template>
   <div class="sections-list">
+    <h3>Особые разделы</h3>
+    <div>
+      <router-link to="/cms/photoarchive">Фотоархив</router-link>
+    </div>
     <h3>Список разделов</h3>
     <div v-for="(item, index) in sections" :key="index">
       <router-link :to="`/cms${item}`">{{item}}</router-link>

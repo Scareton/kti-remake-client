@@ -27,10 +27,16 @@ const routes = [
             component: () => import("../CMS/views/Section.vue"),
           },
           {
-            path: "/cms/create",
-            name: "Создать ресурс",
-            component: () => import("../CMS/views/Section.vue"),
-            meta: {mode: "create"}
+            path: "/cms/photoarchive",
+            name: "Управление фотоархивом",
+            component: () => import("../CMS/views/PhotoArchive.vue"),
+            children: [
+              {
+                path: "/cms/photoarchive/:album",
+                name: "Управление альбомом",
+                component: () => import("../CMS/views/PhotoArchiveAlbum.vue"),
+              },
+            ]
           },
           {
             path: "/cms/*",

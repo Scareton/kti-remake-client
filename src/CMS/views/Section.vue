@@ -357,7 +357,6 @@ export default {
         this.$set(this.post, "fullpath", value.path + value.alias);
         // Alias заполняется транслитизированным title
         if (this.mode === "create") {
-          // TODO Генерировать alias при редактировании документа, но не переписывать существующий
           this.$set(this.post, "alias", slugify(this.post.title));
         }
       },
