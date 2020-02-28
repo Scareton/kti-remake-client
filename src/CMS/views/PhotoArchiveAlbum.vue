@@ -14,9 +14,9 @@
             <v-col cols="4" v-for="(item, index) in photos" :key="index">
               <v-img :src="`${SERVER}${item.path}`" aspect-ratio="1.7" />
               <div class="image-data">
-                <v-text-field label="Название" hide-details></v-text-field>
-                <v-text-field label="Автор" hide-details></v-text-field>
-                <v-text-field label="Место" hide-details></v-text-field>
+                <v-text-field label="Название" hide-details v-model="item.title"></v-text-field>
+                <v-text-field label="Автор" hide-details v-model="item.author"></v-text-field>
+                <v-text-field label="Место" hide-details v-model="item.place"></v-text-field>
                 <div style="margin-top:14px; font-size:11px; color: #648e69;">{{item.path}}</div>
               </div>
             </v-col>
@@ -36,7 +36,6 @@ export default {
   },
   data: () => ({
     photos: [],
-    mode: "create"
   }),
   computed: {
     ...mapState({
@@ -57,6 +56,6 @@ export default {
   },
   created() {
     this.getAlbumPhotos();
-  }
+  },
 };
 </script>

@@ -7,22 +7,8 @@
       </v-col>
       <v-col cols="10">
         <div v-if="post" class="cms_post">
-          <v-text-field label="Заголовок документа" v-model="post.title" :counter="80"></v-text-field>
-
+          <alias-field :title.sync="post.title" :alias.sync="post.alias" label="Alias альбома"></alias-field>
           <v-row>
-            <v-col>
-              <v-text-field label="Alias документа" v-model="post.alias" :rules="[rules.aliasCounter, rules.alias]">
-                <template v-slot:append>
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{on}">
-                      <v-icon v-on="on" @click="reloadAlias">mdi-reload</v-icon>
-                    </template>
-                    <span>Сгенерировать alias</span>
-                  </v-tooltip>
-                </template>
-              </v-text-field>
-            </v-col>
-
             <v-col>
               <v-select :items="sections" label="Родитель документа" v-model="post.path"></v-select>
             </v-col>
@@ -103,7 +89,8 @@ export default {
   components: {
     SectionsList: () => import("@/CMS/components/SectionsList"),
     ResourcesList: () => import("@/CMS/components/ResourcesList"),
-    Editor: () => import("@tinymce/tinymce-vue")
+    Editor: () => import("@tinymce/tinymce-vue"),
+    AliasField: () => import("../components/AliasField")
   },
   data: () => ({
     posts: Array,
@@ -160,7 +147,7 @@ export default {
         external_plugins: {
           code: "/tinymce/plugins/code/plugin.min.js",
           image: "/tinymce/plugins/image/plugin.min.js",
-          media: "/tinymce/plugins/media/plugin.min.js",
+          media: "/tinymce/plugins/media/plugin.min.js"
         },
         media_live_embeds: true,
         style_formats: [
@@ -170,7 +157,7 @@ export default {
             styles: {
               float: "left",
               padding: "0 10px 0 0",
-              width: '40%',
+              width: "40%"
             }
           },
           {
@@ -179,7 +166,7 @@ export default {
             styles: {
               float: "right",
               padding: "0 0 0 10px",
-              width: '40%',
+              width: "40%"
             }
           },
           {
@@ -188,7 +175,7 @@ export default {
             styles: {
               float: "left",
               padding: "0 10px 0 0",
-              width: '50%',
+              width: "50%"
             }
           },
           {
@@ -197,11 +184,12 @@ export default {
             styles: {
               float: "right",
               padding: "0 0 0 10px",
-              width: '50%',
+              width: "50%"
             }
           }
         ],
-        content_style: '*, ::before, ::after {-webkit-box-sizing: inherit;box-sizing: inherit;} html {box-sizing: border-box;} img {max-width: 100%; height: 100%; object-fit: cover;}',
+        content_style:
+          "*, ::before, ::after {-webkit-box-sizing: inherit;box-sizing: inherit;} html {box-sizing: border-box;} img {max-width: 100%; height: 100%; object-fit: cover;}",
         // toolbar: 'undo redo | link image | code',
         images_upload_handler: (blobInfo, success, failure) => {
           var xhr, formData;
