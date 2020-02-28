@@ -16,14 +16,14 @@
       </v-list>
     </div>
 
-    <photo-archive-snippet></photo-archive-snippet>
+    <photo-gallery-albums-slider></photo-gallery-albums-slider>
   </div>
 </template>
 
 <script>
-import PhotoArchiveSnippet from "@/components/PhotoArchiveSnippet"
+import PhotoGalleryAlbumsSlider from "@/components/PhotoGalleryAlbumsSlider"
 export default {
   name: "HomeSide",
-  components: {PhotoArchiveSnippet}
+  components: {PhotoGalleryAlbumsSlider}
 };
 </script>

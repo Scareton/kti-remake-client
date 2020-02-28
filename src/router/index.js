@@ -8,15 +8,15 @@ const routes = [
     component: () => import("../views/EmptyRouterView.vue"),
     meta: { visible: false },
     children: [
-      // Главная -----
       {
+        // Главная 
         path: "",
         name: "Камышинский технологический институт",
         component: () => import("../views/Home.vue"),
         meta: { visible: true }
       },
-      // CMS
       {
+        // CMS
         path: "/cms",
         name: "Система управления контентом КТИ",
         component: () => import("../CMS/views/CmsPage.vue"),
@@ -45,77 +45,24 @@ const routes = [
           }
         ]
       },
-      // Посты и статьи
       {
+        // Фотогалерея
+        path: "/photogallery",
+        name: "Фотогалерея",
+        component: () => import("../views/Photogallery.vue"),
+        children: [
+          {
+            path: "/photogallery/:album",
+            name: "Альбом",
+            component: () => import("../views/PhotogalleryAlbum.vue")
+          }
+        ]
+      },
+      {
+        // Посты и статьи
         path: "/*",
         component: () => import("../views/Post.vue"),
       },
-      // Об институте -----
-      // {
-      //   path: "/about",
-      //   name: "Об институте",
-      //   component: () => import("../views/system/InnerPage.vue"),
-      //   meta: { visible: true, parent: true },
-      //   children: [
-      //     {
-      //       path: "/about",
-      //       name: "Об институте",
-      //       component: () => import("../views/about/about"),
-      //     }
-      //   ]
-      // },
-      // Новости -----
-      // {
-      //   path: "/news",
-      //   name: "Новости",
-      //   component: () => import("../views/News.vue"),
-      //   meta: { visible: true },
-      // },
-      // Образование -----
-      // {
-      //   path: "/education",
-      //   component: () => import("../views/system/InnerPage.vue"),
-      //   meta: { visible: true, parent: true },
-      //   name: "Образование",
-      //   children: [
-      //     {
-      //       path: "/education",
-      //       component: () => import("../views/education/Education.vue"),
-      //       meta: { visible: true },
-      //       name: "Образование",
-      //     },
-      //     {
-      //       path: '/education/higher',
-      //       name: "Высшее образование",
-      //       meta: { visible: true },
-      //       component: () => import("../views/education/Highter.vue"),
-      //     },
-      //     {
-      //       path: '/education/secondary-professional',
-      //       name: "Среднее профессиональное образование",
-      //       meta: { visible: true },
-      //       component: () => import("../views/education/SecondaryProfessional.vue"),
-      //     },
-      //     {
-      //       path: '/education/second-higher',
-      //       name: "Второе высшее образование",
-      //       meta: { visible: true },
-      //       component: () => import("../views/education/SecondHigher.vue"),
-      //     },
-      //     {
-      //       path: '/education/recovery-and-translation',
-      //       name: "Восстановление и перевод",
-      //       meta: { visible: true },
-      //       component: () => import("../views/education/RecoveryAndTranslation.vue"),
-      //     },
-      //     {
-      //       path: '/education/it-school',
-      //       name: "IT школа «Камышонок»",
-      //       meta: { visible: true },
-      //       component: () => import("../views/education/ItSchool.vue"),
-      //     }
-      //   ]
-      // },
     ]
   },
 ];

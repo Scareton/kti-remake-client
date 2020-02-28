@@ -14,7 +14,7 @@
         <div class="photos-grid">
           <v-row>
             <v-col v-for="(item, index) in previews" :key="index" cols="4">
-              <v-img :src="item" />
+              <v-img :src="item" aspect-ratio="1.7" />
               <div class="image-data">
                 <v-text-field label="Название" hide-details v-model="imagesData[index].title"></v-text-field>
                 <v-text-field label="Автор" hide-details v-model="imagesData[index].author"></v-text-field>

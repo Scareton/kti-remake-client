@@ -3,6 +3,9 @@ export default {
   getAlbums() {
     return api().get('photo/albums/')
   },
+  getAlbumsPreviews() {
+    return api().get('photo/albums-previews/')
+  },
   getAlbumPhotos(path) {
     return api().get(`photo/albums/${path}`)
   },
