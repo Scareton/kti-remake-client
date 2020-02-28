@@ -60,8 +60,17 @@ export default {
 </script>
 
 <style>
+/* Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+/*  */
 body {
-  margin:0 !important;
+  margin: 0 !important;
 }
 .app-body {
   height: 100%;

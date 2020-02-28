@@ -4,7 +4,7 @@
     <v-row>
       <v-col cols="2">
         <h3>Альбомы</h3>
-        <router-link v-for="(item, index) in albums" :key="index" :to="item.path">{{item.name}} ({{item.count}})</router-link>
+        <router-link v-for="(item, index) in albums" :key="index" :to="item.path" style="display:block;">{{item.name}} ({{item.count}})</router-link>
         <div class="albums-list-buttons">
           <v-btn small color="primary" @click="createAlbum">Создать альбом</v-btn>
         </div>
@@ -12,12 +12,12 @@
       <v-col cols="10">
         <template v-if="mode === 'create'">
           <h3>Создать новый альбом</h3>
-          <v-row>
-            <alias-field :title.sync="title" :alias.sync="alias" label="Alias альбома"></alias-field>
-          </v-row>
-          <v-expansion-panels multiple accordion style="margin-bottom:18px;margin-top:6px;" :v-model="[0]">
-            <photo-archive-load />
-          </v-expansion-panels>
+          <alias-field :title.sync="title" :alias.sync="alias" label="Alias альбома"></alias-field>
+          <transition name="fade">
+            <v-expansion-panels accordion style="margin-bottom:18px;margin-top:6px;" v-model="panels" v-show="title && alias">
+              <photo-archive-load :newAlbumName="title" :newAlbumAlias="alias" />
+            </v-expansion-panels>
+          </transition>
         </template>
         <router-view></router-view>
       </v-col>
@@ -31,8 +31,9 @@ import { mapState } from "vuex";
 export default {
   data: () => ({
     mode: null,
-    title: "Тут название",
-    alias: ""
+    title: "",
+    alias: "",
+    panels: 0
   }),
   components: {
     PhotoArchiveLoad: () => import("./PhotoArchiveLoad"),
@@ -69,13 +70,11 @@ export default {
     $route: {
       handler(value) {
         this.mode = null;
+        this.getAlbums();
         if (value.query && value.query.mode) this.mode = "create";
       },
       immediate: true
     }
-  },
-  created() {
-    this.getAlbums();
   }
 };
 </script>

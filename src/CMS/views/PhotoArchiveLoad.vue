@@ -37,6 +37,14 @@
 import PhotoService from "@/services/PhotoService";
 import { mapState } from "vuex";
 export default {
+  props: {
+    newAlbumName: {
+      type: String
+    },
+    newAlbumAlias: {
+      type: String
+    }
+  },
   data: () => ({
     photos: [],
     uploadedValue: null,
@@ -66,14 +74,24 @@ export default {
     },
     savePhotos(files) {
       // Если альбом доступен
-      if (this.album) {
-        // Записываем его alias
-        let album = this.album._id;
+      if (this.album || (this.newAlbumName && this.newAlbumAlias)) {
+        // Записываем его alias и name
+        let name, alias;
+
+        // Если нужно создать новый альбом
+        if (this.newAlbumName && this.newAlbumAlias) {
+          name = this.newAlbumName;
+          alias = this.newAlbumAlias;
+        } else {
+          name = this.album.name;
+          alias = this.album._id;
+        }
+
         // Создаём объект formdata
         let formdata = new FormData();
 
         // Добавляем поле с названием альбома
-        formdata.append("albumname", this.album.name);
+        formdata.append("albumname", name);
 
         // Перебираем файлы и добавляем их к formdata вместе с данными фотографий (По индексу)
         files.forEach((file, index) => {
@@ -82,9 +100,20 @@ export default {
         });
 
         // Делаем запрос на сохранение файлов
-        PhotoService.uploadAlbumPhotos(album, formdata).then(response => {
-          console.log(response);
+        PhotoService.uploadAlbumPhotos(alias, formdata).then(response => {
+          if (response.data.success) {
+            this.$router.replace(`/cms/photoarchive/${alias}`);
+          }
         });
+      }
+    }
+  },
+  watch: {
+    $route: {
+      handler(value) {
+        this.previews.length = 0;
+        this.imagesData.length = 0;
+        this.uploadedValue = null;
       }
     }
   }

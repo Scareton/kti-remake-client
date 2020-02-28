@@ -8,9 +8,9 @@
         <template v-slot:append>
           <v-tooltip bottom>
             <template v-slot:activator="{on}">
-              <v-icon v-on="on" @click="reloadAlias">mdi-reload</v-icon>
+              <v-icon v-on="on" @click="reloadAlias(title)">mdi-reload</v-icon>
             </template>
-            <slot>Сгенерировать alias</slot>
+            Сгенерировать alias
           </v-tooltip>
         </template>
       </v-text-field>
@@ -58,20 +58,19 @@ export default {
   },
   methods: {
     titleChanged(value) {
-      this.$emit('update:title', value);
+      this.$emit("update:title", value);
     },
     aliasChanged(value) {
       this.reloadAlias(value);
     },
     reloadAlias(value) {
-      if (!value) value = this.title
-      this.$emit('update:alias', slugify(value));
+      this.$emit("update:alias", slugify(value));
     }
   },
   watch: {
     title: {
       handler(value) {
-        this.reloadAlias();
+        this.reloadAlias(value);
       },
       immediate: true
     }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="album">
     <div style="margin-bottom:18px;">
       <h3 v-if="album">Альбом «{{album.name}}»</h3>
     </div>
@@ -54,8 +54,13 @@ export default {
       });
     }
   },
-  created() {
-    this.getAlbumPhotos();
-  },
+  watch: {
+    '$route': {
+      handler(value) {
+        this.getAlbumPhotos();
+      },
+      immediate: true
+    }
+  }
 };
 </script>
