@@ -65,7 +65,8 @@ export default {
 .fade-leave-active {
   transition: opacity 0.5s;
 }
-.fade-enter, .fade-leave-to {
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 /*  */
@@ -109,8 +110,13 @@ body {
 }
 /*  */
 
-/* inner pages */
-.router-block {
+.v-application h1 > a,
+.v-application .v-subheader > a {
+  color: inherit;
+  text-decoration: none;
 }
-/*  */
+.v-application h1  > a:hover,
+.v-application .v-subheader > a:hover {
+  text-decoration: underline;
+}
 </style>

@@ -24,6 +24,7 @@ export default new Vuex.Store({
   state: {
     posts: null,
     sections: null,
+    albums: [],
 
     // cms
     cms_albums: [],
@@ -36,6 +37,9 @@ export default new Vuex.Store({
   mutations: {
     SET_sections(state, payload) {
       state.sections = payload;
+    },
+    SET_albums(state, payload) {
+      state.albums = payload;
     },
     SET_cms_albums(state, payload) {
       state.cms_albums = payload;

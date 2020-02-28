@@ -1,6 +1,6 @@
 <template>
   <div class="photobase-snippet">
-    <v-subheader class="title">Фотоархив</v-subheader>
+    <v-subheader class="title"><router-link to="/photogallery">Фотогалерея</router-link></v-subheader>
     <div style="padding: 0 16px;">
       <swiper class="photobase-snippet-items">
         <swiper-slide class="photobase-snippet-item" v-for="(item, index) in albums" :key="index">
