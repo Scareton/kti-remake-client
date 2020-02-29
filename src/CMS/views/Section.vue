@@ -7,7 +7,24 @@
       </v-col>
       <v-col cols="10">
         <div v-if="post" class="cms_post">
-          <alias-field :title.sync="post.title" :alias.sync="post.alias" label="Alias альбома"></alias-field>
+          <!-- <alias-field v-bind:title.sync="post.title" v-bind:alias.sync="post.alias" label="Alias альбома"></alias-field> -->
+          <v-row>
+            <v-col>
+              <v-text-field label="Заголовок документа" v-model="post.title" :counter="80"></v-text-field>
+            </v-col>
+            <v-col>
+              <v-text-field label="Alias документа" v-model="post.alias" :rules="[rules.aliasCounter, rules.alias]">
+                <template v-slot:append>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{on}">
+                      <v-icon v-on="on" @click="reloadAlias">mdi-reload</v-icon>
+                    </template>
+                    <span>Сгенерировать alias</span>
+                  </v-tooltip>
+                </template>
+              </v-text-field>
+            </v-col>
+          </v-row>
           <v-row>
             <v-col>
               <v-select :items="sections" label="Родитель документа" v-model="post.path"></v-select>
@@ -89,8 +106,8 @@ export default {
   components: {
     SectionsList: () => import("@/CMS/components/SectionsList"),
     ResourcesList: () => import("@/CMS/components/ResourcesList"),
-    Editor: () => import("@tinymce/tinymce-vue"),
-    AliasField: () => import("../components/AliasField")
+    Editor: () => import("@tinymce/tinymce-vue")
+    // AliasField: () => import("../components/AliasField")
   },
   data: () => ({
     posts: Array,
