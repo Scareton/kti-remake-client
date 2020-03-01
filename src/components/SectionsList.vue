@@ -4,24 +4,15 @@
       <v-sheet class="pa-4 primary">
         <v-text-field v-model="search" label="Поиск..." dark flat solo-inverted hide-details clearable clear-icon="mdi-close-circle-outline"></v-text-field>
       </v-sheet>
-      <v-treeview :items="parentsTree" :filter="filter" :search="search" hoverable activatable return-object @update:active="resourceChanged">
+      <v-treeview :items="parentsTree" :open="open" :active.sync="selected" :filter="filter" :search="search" hoverable activatable return-object @update:active="resourceChanged">
         <template v-slot:prepend="{ item, open }">
           <v-icon v-if="item.children[0]">{{ open ? 'mdi-folder-open' : 'mdi-folder' }}</v-icon>
           <v-icon v-else>mdi-file</v-icon>
         </template>
-        <template v-slot:append="{ item }">
+        <template v-slot:append="{ item }" v-if="cms">
           <v-icon class="resource-add" @click.stop="createResource(item)">mdi-plus</v-icon>
         </template>
       </v-treeview>
-    </v-card>
-
-    <v-card style="margin-top:16px;">
-      <v-card-text>
-        <h3>Особые разделы</h3>
-        <div>
-          <router-link to="/cms/photoarchive">Фотоархив</router-link>
-        </div>
-      </v-card-text>
     </v-card>
   </div>
 </template>
@@ -39,9 +30,20 @@ function compare(a, b) {
 
 import { mapState } from "vuex";
 export default {
+  props: {
+    cms: {
+      type: Boolean,
+      default: false
+    },
+    items: {
+      type: Array
+    }
+  },
   data: () => ({
     search: null,
-    caseSensitive: false
+    caseSensitive: false,
+    selected: [],
+    open: []
   }),
   computed: {
     ...mapState({
@@ -49,7 +51,9 @@ export default {
     }),
     parentsTree() {
       // Копируем секции в отдельный объект
-      let data = JSON.parse(JSON.stringify(this.sections));
+      let data;
+      if (this.items) data = this.items;
+      else data = JSON.parse(JSON.stringify(this.sections));
 
       // Сортируем секции по названию
       data.sort(compare);
@@ -94,7 +98,9 @@ export default {
       })(data);
 
       // Удаляем первый (пустой) элемент и возвращаем древовидный объект
-      return tree[0].children;
+      if (this.items) tree = tree[0].children[0].children;
+      else tree = tree[0].children
+      return tree;
     },
     filter() {
       return this.caseSensitive
@@ -106,19 +112,23 @@ export default {
     resourceChanged(item) {
       if (item[0]) {
         item = item[0];
-        this.$router.push(`/cms/${item.fullpath}`);
+        let path;
+        if (this.cms) path = `/cms${item.fullpath}`;
+        else path = item.fullpath;
+        this.$router.push(path);
       }
     },
     createResource(item) {
+      this.selected = [];
       let path = `/cms${item.fullpath}`;
-      console.log(path);
+
       this.$router
         .push({ path: path, query: { mode: "create" } })
         .catch(err => {
           console.log(err);
         });
     }
-  }
+  },
 };
 </script>
 

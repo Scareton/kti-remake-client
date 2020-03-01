@@ -2,13 +2,23 @@
   <div>
     <v-row>
       <v-col cols="3">
-        <sections-list />
-        <!-- <resources-list :items="siblings" /> -->
+        <sections-list cms />
+
+        <v-card style="margin-top:16px;">
+          <v-card-text>
+            <h3>Особые разделы</h3>
+            <div>
+              <router-link to="/cms/photoarchive">Фотоархив</router-link>
+            </div>
+          </v-card-text>
+        </v-card>
+
       </v-col>
       <v-col cols="9">
         <v-card v-if="post" class="cms_post">
-          <!-- <alias-field v-bind:title.sync="post.title" v-bind:alias.sync="post.alias" label="Alias альбома"></alias-field> -->
           <v-card-text>
+            <h2 v-if="mode === 'create'">Создание документа</h2>
+            <h2 v-else>Редактирование документа</h2>
             <v-row>
               <v-col>
                 <v-text-field label="Заголовок документа" v-model="post.title" @input="titleChanged" :counter="80"></v-text-field>
@@ -107,8 +117,7 @@ import "tinymce/themes/silver";
 import { mapState } from "vuex";
 export default {
   components: {
-    SectionsList: () => import("@/CMS/components/SectionsList"),
-    ResourcesList: () => import("@/CMS/components/ResourcesList"),
+    SectionsList: () => import("@/components/SectionsList"),
     Editor: () => import("@tinymce/tinymce-vue")
     // AliasField: () => import("../components/AliasField")
   },
@@ -369,7 +378,7 @@ export default {
       // Отслеживаем изменения в документе и обновляем поля
       handler(value) {
         // Полный путь к документу вычисляется при сложении пути к родителю и alias
-        if (value.path[value.path.length - 1] !== "/") value.path+="/";
+        if (value.path[value.path.length - 1] !== "/") value.path += "/";
 
         this.$set(this.post, "fullpath", value.path + value.alias);
         // Alias заполняется транслитизированным title

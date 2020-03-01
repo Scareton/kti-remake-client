@@ -3,17 +3,20 @@
     <v-container>
       <v-row>
         <v-col cols="2">
-          <navigation-menu :items="siblings"></navigation-menu>
+          <!-- <navigation-menu :items="siblings"></navigation-menu> -->
+          <sections-list :items="siblings"></sections-list>
         </v-col>
         <v-col cols="10">
-          <div class="article" v-if="post" v-html="post.content"></div>
-          <div class="post-forms" v-if="post && post.forms && post.forms[0]">
-            <div class="post-form" v-for="(form, index) in post.forms" :key="index">
-              <template v-if="form === 'CallbackForm'">
-                <callback-form></callback-form>
-              </template>
+          <v-card style="padding: 16px;">
+            <div class="article" v-if="post" v-html="post.content"></div>
+            <div class="post-forms" v-if="post && post.forms && post.forms[0]">
+              <div class="post-form" v-for="(form, index) in post.forms" :key="index">
+                <template v-if="form === 'CallbackForm'">
+                  <callback-form></callback-form>
+                </template>
+              </div>
             </div>
-          </div>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
@@ -26,7 +29,8 @@ import PostsService from "@/services/PostsService";
 export default {
   components: {
     NavigationMenu: () => import("../components/navigation/NavigationMenu"),
-    CallbackForm: () => import("../components/forms/CallbackForm")
+    CallbackForm: () => import("../components/forms/CallbackForm"),
+    SectionsList: () => import("../components/SectionsList")
   },
   data: () => ({
     post: null,
