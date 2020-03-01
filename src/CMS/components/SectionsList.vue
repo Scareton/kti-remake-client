@@ -9,6 +9,9 @@
           <v-icon v-if="item.children[0]">{{ open ? 'mdi-folder-open' : 'mdi-folder' }}</v-icon>
           <v-icon v-else>mdi-file</v-icon>
         </template>
+        <template v-slot:append="{ item }">
+          <v-icon class="resource-add" @click.stop="createResource(item)">mdi-plus</v-icon>
+        </template>
       </v-treeview>
     </v-card>
 
@@ -101,9 +104,19 @@ export default {
   },
   methods: {
     resourceChanged(item) {
-      item = item[0];
-      this.$router.push(`/cms/${item.fullpath}`);
-      console.log(item);
+      if (item[0]) {
+        item = item[0];
+        this.$router.push(`/cms/${item.fullpath}`);
+      }
+    },
+    createResource(item) {
+      let path = `/cms${item.fullpath}`;
+      console.log(path);
+      this.$router
+        .push({ path: path, query: { mode: "create" } })
+        .catch(err => {
+          console.log(err);
+        });
     }
   }
 };
@@ -122,4 +135,17 @@ export default {
   margin-top: 12px;
 }
 /* TODO .v-treeview-node__level уменьшить размер на маленьких экранах */
+</style>
+
+<style>
+.v-treeview-node {
+  cursor: pointer;
+}
+.v-treeview-node__root .resource-add {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+.v-treeview-node__root:hover .resource-add {
+  opacity: 1;
+}
 </style>

@@ -11,10 +11,10 @@
           <v-card-text>
             <v-row>
               <v-col>
-                <v-text-field label="Заголовок документа" v-model="post.title" :counter="80"></v-text-field>
+                <v-text-field label="Заголовок документа" v-model="post.title" @input="titleChanged" :counter="80"></v-text-field>
               </v-col>
               <v-col>
-                <v-text-field label="Alias документа" v-model="post.alias" :rules="[rules.aliasCounter, rules.alias]">
+                <v-text-field label="Alias документа" v-model="post.alias" @input="aliasChanged" :rules="[rules.aliasCounter, rules.alias]">
                   <template v-slot:append>
                     <v-tooltip bottom>
                       <template v-slot:activator="{on}">
@@ -27,12 +27,11 @@
               </v-col>
             </v-row>
             <v-row>
-  
               <v-col>
-                <v-select :items="sections" label="Родитель документа" v-model="post.path"></v-select>
-                <v-treeview :items="parentsTree"></v-treeview>
+                <v-text-field :items="sections" disabled label="Родитель документа" v-model="post.path"></v-text-field>
+                <!-- <v-treeview :items="parentsTree"></v-treeview> -->
               </v-col>
-  
+
               <v-col>
                 <v-tooltip bottom>
                   <template v-slot:activator="{on}">
@@ -49,7 +48,7 @@
                 </v-tooltip>
               </v-col>
             </v-row>
-  
+
             <div v-if="post.path === '/news/'">
               <v-row>
                 <v-col>
@@ -67,11 +66,11 @@
               </v-row>
               <v-textarea label="Описание документа (Краткое превью)" v-model="post.description"></v-textarea>
             </div>
-  
+
             <div style="color: rgba(0, 0, 0, 0.6); font-size: 13px;">Содержание документа:</div>
-  
+
             <editor :init="tinymceinit" v-model="post.content"></editor>
-  
+
             <div class="d-flex systemButtons">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
@@ -79,7 +78,7 @@
                 </template>
                 <span>Видимость документа в меню (Например, в подвале сайта)</span>
               </v-tooltip>
-  
+
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-checkbox v-on="on" v-model="post.published" label="Опубликовано"></v-checkbox>
@@ -87,7 +86,7 @@
                 <span>Неопубликованные ресурсы не видны обычным пользователям, но доступны для просмотра и редактирования в CMS</span>
               </v-tooltip>
             </div>
-  
+
             <div class="cms_post-actions">
               <v-btn v-if="mode === 'create'" @click="(e) => createResource(e, post)">Создать ресурс</v-btn>
               <v-btn v-if="mode === 'edit'" @click="(e) => updateResource(e, post)">Сохранить ресурс</v-btn>
@@ -299,6 +298,12 @@ export default {
      */
     reloadAlias() {
       this.$set(this.post, "alias", slugify(this.post.title));
+    },
+    titleChanged(value) {
+      this.$set(this.post, "alias", slugify(this.post.title));
+    },
+    aliasChanged(value) {
+      this.$set(this.post, "alias", slugify(value));
     }
   },
   watch: {
@@ -364,10 +369,12 @@ export default {
       // Отслеживаем изменения в документе и обновляем поля
       handler(value) {
         // Полный путь к документу вычисляется при сложении пути к родителю и alias
+        if (value.path[value.path.length - 1] !== "/") value.path+="/";
+
         this.$set(this.post, "fullpath", value.path + value.alias);
         // Alias заполняется транслитизированным title
         if (this.mode === "create") {
-          this.$set(this.post, "alias", slugify(this.post.title));
+          // this.$set(this.post, "alias", slugify(this.post.title));
         }
       },
       deep: true
