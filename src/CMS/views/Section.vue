@@ -1,95 +1,99 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="2">
+      <v-col cols="3">
         <sections-list />
-        <resources-list :items="siblings" />
+        <!-- <resources-list :items="siblings" /> -->
       </v-col>
-      <v-col cols="10">
-        <div v-if="post" class="cms_post">
+      <v-col cols="9">
+        <v-card v-if="post" class="cms_post">
           <!-- <alias-field v-bind:title.sync="post.title" v-bind:alias.sync="post.alias" label="Alias альбома"></alias-field> -->
-          <v-row>
-            <v-col>
-              <v-text-field label="Заголовок документа" v-model="post.title" :counter="80"></v-text-field>
-            </v-col>
-            <v-col>
-              <v-text-field label="Alias документа" v-model="post.alias" :rules="[rules.aliasCounter, rules.alias]">
-                <template v-slot:append>
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{on}">
-                      <v-icon v-on="on" @click="reloadAlias">mdi-reload</v-icon>
-                    </template>
-                    <span>Сгенерировать alias</span>
-                  </v-tooltip>
-                </template>
-              </v-text-field>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-select :items="sections" label="Родитель документа" v-model="post.path"></v-select>
-            </v-col>
-
-            <v-col>
-              <v-tooltip bottom>
-                <template v-slot:activator="{on}">
-                  <v-text-field v-on="on" label="Ссылка на документ" v-model="post.fullpath" readonly></v-text-field>
-                </template>
-                <div>
-                  <span>Формируется на основе полей&nbsp;</span>
-                  <strong>alias</strong> и
-                  <strong>родитель</strong>
-                </div>
-                <div>
-                  <i>Не изменяется вручную</i>
-                </div>
-              </v-tooltip>
-            </v-col>
-          </v-row>
-
-          <div v-if="post.path === '/news/'">
+          <v-card-text>
             <v-row>
               <v-col>
-                <v-file-input @change="postCoverLoaded" v-model="uploadedCoverFile" :rules="rules.image" accept="image/png, image/jpeg, image/bmp" placeholder="Загрузите обложку для новости" prepend-icon="mdi-camera" label="Обложка"></v-file-input>
-                <div v-if="postCover" style="max-width:260px;">
-                  <v-img :src="postCover" />
-                </div>
+                <v-text-field label="Заголовок документа" v-model="post.title" :counter="80"></v-text-field>
               </v-col>
               <v-col>
-                <v-select :items="tags" label="Раздел новости" v-model="post.tag"></v-select>
-              </v-col>
-              <v-col v-if="post.tag">
-                <v-combobox :items="subtags" label="Подраздел новости" :search-input.sync="post.subtag"></v-combobox>
+                <v-text-field label="Alias документа" v-model="post.alias" :rules="[rules.aliasCounter, rules.alias]">
+                  <template v-slot:append>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{on}">
+                        <v-icon v-on="on" @click="reloadAlias">mdi-reload</v-icon>
+                      </template>
+                      <span>Сгенерировать alias</span>
+                    </v-tooltip>
+                  </template>
+                </v-text-field>
               </v-col>
             </v-row>
-            <v-textarea label="Описание документа (Краткое превью)" v-model="post.description"></v-textarea>
-          </div>
-
-          <div style="color: rgba(0, 0, 0, 0.6); font-size: 13px;">Содержание документа:</div>
-
-          <editor :init="tinymceinit" v-model="post.content"></editor>
-
-          <div class="d-flex systemButtons">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-checkbox v-on="on" v-model="post.visible" label="Видимость в меню"></v-checkbox>
-              </template>
-              <span>Видимость документа в меню (Например, в подвале сайта)</span>
-            </v-tooltip>
-
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-checkbox v-on="on" v-model="post.published" label="Опубликовано"></v-checkbox>
-              </template>
-              <span>Неопубликованные ресурсы не видны обычным пользователям, но доступны для просмотра и редактирования в CMS</span>
-            </v-tooltip>
-          </div>
-
-          <div class="cms_post-actions">
-            <v-btn v-if="mode === 'create'" @click="(e) => createResource(e, post)">Создать ресурс</v-btn>
-            <v-btn v-if="mode === 'edit'" @click="(e) => updateResource(e, post)">Сохранить ресурс</v-btn>
-          </div>
-        </div>
+            <v-row>
+  
+              <v-col>
+                <v-select :items="sections" label="Родитель документа" v-model="post.path"></v-select>
+                <v-treeview :items="parentsTree"></v-treeview>
+              </v-col>
+  
+              <v-col>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{on}">
+                    <v-text-field v-on="on" label="Ссылка на документ" v-model="post.fullpath" readonly></v-text-field>
+                  </template>
+                  <div>
+                    <span>Формируется на основе полей&nbsp;</span>
+                    <strong>alias</strong> и
+                    <strong>родитель</strong>
+                  </div>
+                  <div>
+                    <i>Не изменяется вручную</i>
+                  </div>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+  
+            <div v-if="post.path === '/news/'">
+              <v-row>
+                <v-col>
+                  <v-file-input @change="postCoverLoaded" v-model="uploadedCoverFile" :rules="rules.image" accept="image/png, image/jpeg, image/bmp" placeholder="Загрузите обложку для новости" prepend-icon="mdi-camera" label="Обложка"></v-file-input>
+                  <div v-if="postCover" style="max-width:260px;">
+                    <v-img :src="postCover" />
+                  </div>
+                </v-col>
+                <v-col>
+                  <v-select :items="tags" label="Раздел новости" v-model="post.tag"></v-select>
+                </v-col>
+                <v-col v-if="post.tag">
+                  <v-combobox :items="subtags" label="Подраздел новости" :search-input.sync="post.subtag"></v-combobox>
+                </v-col>
+              </v-row>
+              <v-textarea label="Описание документа (Краткое превью)" v-model="post.description"></v-textarea>
+            </div>
+  
+            <div style="color: rgba(0, 0, 0, 0.6); font-size: 13px;">Содержание документа:</div>
+  
+            <editor :init="tinymceinit" v-model="post.content"></editor>
+  
+            <div class="d-flex systemButtons">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-checkbox v-on="on" v-model="post.visible" label="Видимость в меню"></v-checkbox>
+                </template>
+                <span>Видимость документа в меню (Например, в подвале сайта)</span>
+              </v-tooltip>
+  
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-checkbox v-on="on" v-model="post.published" label="Опубликовано"></v-checkbox>
+                </template>
+                <span>Неопубликованные ресурсы не видны обычным пользователям, но доступны для просмотра и редактирования в CMS</span>
+              </v-tooltip>
+            </div>
+  
+            <div class="cms_post-actions">
+              <v-btn v-if="mode === 'create'" @click="(e) => createResource(e, post)">Создать ресурс</v-btn>
+              <v-btn v-if="mode === 'edit'" @click="(e) => updateResource(e, post)">Сохранить ресурс</v-btn>
+            </div>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
   </div>
@@ -115,6 +119,7 @@ export default {
     postCover: null,
     uploadedCoverFile: null,
     siblings: null,
+    parentsTree: [],
     mode: null,
     tags: [
       "Институт",

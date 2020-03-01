@@ -48,3 +48,9 @@ export default {
   margin-top: 12px;
 }
 </style>
+
+<style>
+.v-treeview-node {
+  cursor: pointer;
+}
+</style>
