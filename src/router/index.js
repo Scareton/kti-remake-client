@@ -39,7 +39,12 @@ const routes = [
             ]
           },
           {
-            path: "/cms/*",
+            path: "/cms/links",
+            name: "Управление ссылками",
+            component: () => import("../CMS/views/Links.vue")
+          },
+          {
+            path: "/cms-post/*",
             name: "Раздел",
             component: () => import("../CMS/views/Section.vue"),
           }

@@ -7,15 +7,15 @@
         <v-card style="margin-top:16px;">
           <v-card-text>
             <h3>Особые разделы</h3>
-            <div>
-              <router-link to="/cms/photoarchive">Фотоархив</router-link>
-            </div>
+            <v-list>
+              <v-list-item to="/cms/photoarchive">Фотоархив</v-list-item>
+              <v-list-item to="/cms/links">Управление ссылками</v-list-item>
+            </v-list>
           </v-card-text>
         </v-card>
-
       </v-col>
       <v-col cols="9">
-        <v-card v-if="post" class="cms_post">
+        <v-card v-if="post" class="cms-post_post">
           <v-card-text>
             <h2 v-if="mode === 'create'">Создание документа</h2>
             <h2 v-else>Редактирование документа</h2>
@@ -93,11 +93,11 @@
                 <template v-slot:activator="{ on }">
                   <v-checkbox v-on="on" v-model="post.published" label="Опубликовано"></v-checkbox>
                 </template>
-                <span>Неопубликованные ресурсы не видны обычным пользователям, но доступны для просмотра и редактирования в CMS</span>
+                <span>Неопубликованные ресурсы не видны обычным пользователям, но доступны для просмотра и редактирования в cms-post</span>
               </v-tooltip>
             </div>
 
-            <div class="cms_post-actions">
+            <div class="cms-post_post-actions">
               <v-btn v-if="mode === 'create'" @click="(e) => createResource(e, post)">Создать ресурс</v-btn>
               <v-btn v-if="mode === 'edit'" @click="(e) => updateResource(e, post)">Сохранить ресурс</v-btn>
             </div>
@@ -262,13 +262,15 @@ export default {
       for (var key in doc) {
         formdata.append(key, doc[key]);
       }
-      // Получаем путь к странице без префикса cms
-      let path = this.$route.path.replace(/^(\/cms\/)/, "");
+      // Получаем путь к странице без префикса cms-post
+      let path = this.$route.path.replace(/^(\/cms-post\/)/, "");
       PostsService.createPost(path, formdata).then(response => {
         // Если ответ положительный
         if (response.data.success) {
-          // Переходим по ссылке на созданный документ в cms
-          this.$router.replace({ path: `/cms${response.data.post.fullpath}` });
+          // Переходим по ссылке на созданный документ в cms-post
+          this.$router.replace({
+            path: `/cms-post${response.data.post.fullpath}`
+          });
         }
       });
     },
@@ -277,8 +279,8 @@ export default {
       for (var key in doc) {
         formdata.append(key, doc[key]);
       }
-      // Получаем путь к странице без префикса cms
-      let path = this.$route.path.replace(/^(\/cms\/)/, "");
+      // Получаем путь к странице без префикса cms-post
+      let path = this.$route.path.replace(/^(\/cms-post\/)/, "");
 
       // Запрашиваем обновление документа у сервера
       PostsService.updatePost(path, formdata).then(response => {
@@ -287,7 +289,7 @@ export default {
           // Если адрес документа изменился, переходим по новой ссылке
           if (response.data.post.fullpath !== path)
             this.$router.replace({
-              path: `/cms${response.data.post.fullpath}`
+              path: `/cms-post${response.data.post.fullpath}`
             });
         }
       });
@@ -321,8 +323,8 @@ export default {
         // Обнуляем обложку
         this.uploadedCoverFile = null;
         this.postCover = null;
-        // Получаем путь к странице без префикса cms
-        let path = value.path.replace(/^(\/cms\/)/, "");
+        // Получаем путь к странице без префикса cms-post
+        let path = value.path.replace(/^(\/cms-post\/)/, "");
         // Если true - обновляем состояние на выбранный пост из базы
         let needToSetPost = true;
 
@@ -397,19 +399,19 @@ export default {
 @import url("/tinymce/skins/ui/oxide/content.min.css");
 @import url("/tinymce/skins/content/default/content.min.css");
 
-.cms_post-actions {
+.cms-post_post-actions {
   margin: 12px -6px;
 }
-.cms_post-actions .v-btn {
+.cms-post_post-actions .v-btn {
   margin: 0 6px;
 }
-.cms_post .v-textarea textarea {
+.cms-post_post .v-textarea textarea {
   height: 50px;
 }
-.cms_post .systemButtons {
+.cms-post_post .systemButtons {
   margin: 16px -12px 0 -12px;
 }
-.cms_post .systemButtons > .v-input {
+.cms-post_post .systemButtons > .v-input {
   margin: 0 12px;
 }
 </style>

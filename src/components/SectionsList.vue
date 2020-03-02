@@ -13,6 +13,16 @@
           <v-icon class="resource-add" @click.stop="createResource(item)">mdi-plus</v-icon>
         </template>
       </v-treeview>
+      <v-list dense v-if="cms">
+        <v-list-item @click="createResource()">
+          <v-list-item-icon>
+            <v-icon>mdi-plus</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>Добавить раздел</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
     </v-card>
   </div>
 </template>
@@ -99,7 +109,7 @@ export default {
 
       // Удаляем первый (пустой) элемент и возвращаем древовидный объект
       if (this.items) tree = tree[0].children[0].children;
-      else tree = tree[0].children
+      else tree = tree[0].children;
       return tree;
     },
     filter() {
@@ -113,22 +123,24 @@ export default {
       if (item[0]) {
         item = item[0];
         let path;
-        if (this.cms) path = `/cms${item.fullpath}`;
+        if (this.cms) path = `/cms-post${item.fullpath}`;
         else path = item.fullpath;
         this.$router.push(path);
       }
     },
     createResource(item) {
       this.selected = [];
-      let path = `/cms${item.fullpath}`;
-
+      let path;
+      if (!item) path = '/cms-post/';
+      else path = `/cms-post${item.fullpath}`;
+      
       this.$router
         .push({ path: path, query: { mode: "create" } })
         .catch(err => {
           console.log(err);
         });
     }
-  },
+  }
 };
 </script>
 
