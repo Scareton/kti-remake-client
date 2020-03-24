@@ -15,6 +15,9 @@ export default {
   updatePost(path, post) {
     return api().put(path, post);
   },
+  removePost(path) {
+    return api().delete(path)
+  },
   getSections() {
     return api().get("sections")
   },

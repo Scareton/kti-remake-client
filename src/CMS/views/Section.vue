@@ -5,7 +5,7 @@
         <template v-if="mode === 'create'">Создание документа</template>
         <template v-else>Редактирование документа</template>
       </v-card-title>
-      <v-divider/>
+      <v-divider />
       <v-card-text>
         <v-row>
           <v-col>
@@ -88,9 +88,24 @@
         <div class="cms-post_post-actions">
           <v-btn v-if="mode === 'create'" @click="(e) => createResource(e, post)">Создать ресурс</v-btn>
           <v-btn v-if="mode === 'edit'" @click="(e) => updateResource(e, post)">Сохранить ресурс</v-btn>
+          <v-btn v-if="mode === 'edit'" @click="postToRemove = post; removePost = true;" color="red darken-1" style="color:#fff">Удалить ресурс</v-btn>
         </div>
       </v-card-text>
     </v-card>
+
+    <!-- Диалог удаления документа -->
+    <v-dialog width="unset" v-model="removePost">
+      <v-card>
+        <v-card-title>Удаление документа</v-card-title>
+        <v-divider />
+        <div style="padding:16px;">Вы действительно хотите удалить документ?</div>
+        <v-divider />
+        <v-card-actions>
+          <v-btn text color="red darken-1" style="color:#fff;" @click="removeResource(postToRemove)">Удалить</v-btn>
+          <v-btn text @click="removePost = false">Отмена</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -107,6 +122,8 @@ export default {
     // AliasField: () => import("../components/AliasField")
   },
   data: () => ({
+    removePost: false,
+    postToRemove: null,
     posts: Array,
     post: null,
     postCover: null,
@@ -291,6 +308,28 @@ export default {
             this.$router.replace({
               path: `/cms-post${response.data.post.fullpath}`
             });
+        }
+      });
+    },
+    removeResource(doc) {
+      // Получаем путь к странице без префикса cms-post
+      let path = this.$route.path.replace(/^(\/cms-post\/)/, "");
+      this.$store.commit("OPEN_loader");
+      PostsService.removePost(path).then(response => {
+        this.$store.commit("CLOSE_loader");
+        if (response.data.success) {
+          this.$router.push("/cms");
+          this.postToRemove = null;
+          this.removePost = false;
+          this.$store.commit(
+            "OPEN_snackbar_success",
+            "Документ успешно перемещён в архив"
+          );
+        } else {
+          this.$store.commit(
+            "OPEN_snackbar_error",
+            "Произошла ошибка при удалении документа"
+          );
         }
       });
     },
