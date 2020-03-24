@@ -3,16 +3,7 @@
     <div class="homeside-resources">
       <v-list>
         <v-subheader class="title">Ресурсы</v-subheader>
-        <v-list-item dense active-class=" " to=" ">Сведения об образовательной организации</v-list-item>
-        <v-list-item dense active-class=" " to=" ">Нормативные документы</v-list-item>
-        <v-list-item dense active-class=" " to=" ">Расписание занятий</v-list-item>
-        <v-list-item dense active-class=" " to=" ">Библиотека</v-list-item>
-        <v-list-item dense active-class=" " to=" ">Конференции</v-list-item>
-        <v-list-item dense active-class=" " to=" ">Виртуальная приемная</v-list-item>
-        <v-list-item dense active-class=" " to=" ">Видеоархив института</v-list-item>
-        <v-list-item dense active-class=" " to=" ">Электронные сервисы</v-list-item>
-        <v-list-item dense active-class=" " to=" ">ЭИОС</v-list-item>
-        <v-list-item dense active-class=" " to=" ">СДО-КТИ</v-list-item>
+        <v-list-item dense active-class=" " v-for="link in links" :key="link._id" :to="link.fullpath">{{link.title}}</v-list-item>
       </v-list>
     </div>
 
@@ -22,8 +13,25 @@
 
 <script>
 import PhotoGalleryAlbumsSlider from "@/components/PhotoGalleryAlbumsSlider"
+import NavigationsService from "@/services/NavigationsService.js"
 export default {
   name: "HomeSide",
-  components: {PhotoGalleryAlbumsSlider}
+  components: {PhotoGalleryAlbumsSlider},
+  data: () => ({
+    links: [],
+    navigationId: "5e5cd6547cd02bb73257bbf7",
+  }),
+  methods: {
+    getLinks() {
+      NavigationsService.getLinks(this.navigationId).then(response => {
+        if (response.data.success) {
+          this.links = response.data.links
+        }
+      })
+    }
+  },
+  created() {
+    this.getLinks();
+  }
 };
 </script>

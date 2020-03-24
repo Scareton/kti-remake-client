@@ -41,6 +41,20 @@
         <Footer></Footer>
       </div>
     </v-content>
+
+    <!-- Всплывающее окно для ошибок -->
+    <v-snackbar v-model="snackbar.display" :color="snackbar.color">
+      <span :class="snackbar.textColor">
+        <template v-if="snackbar.message">{{snackbar.message}}</template>
+        <template v-else>Неизвестная ошибка</template>
+      </span>
+      <v-btn text dark @click="snackbar = false">Закрыть</v-btn>
+    </v-snackbar>
+
+    <!-- Глобальный лоадер -->
+    <v-overlay :value="loader" z-index="2000">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
   </v-app>
 </template>
 
@@ -49,9 +63,24 @@ import Footer from "@/components/Footer";
 export default {
   name: "App",
   components: { Footer },
-  data: () => ({
-    //
-  }),
+  computed: {
+    snackbar: {
+      get() {
+        return this.$store.state.system.snackbar;
+      },
+      set() {
+        this.$store.commit("CLOSE_snackbar");
+      }
+    },
+    loader: {
+      get() {
+        return this.$store.state.system.loader;
+      },
+      set() {
+        this.$store.commit("CLOSE_loader");
+      }
+    }
+  },
   methods: {},
   created() {
     this.$store.dispatch("SET_sections");
@@ -115,7 +144,7 @@ body {
   color: inherit;
   text-decoration: none;
 }
-.v-application h1  > a:hover,
+.v-application h1 > a:hover,
 .v-application .v-subheader > a:hover {
   text-decoration: underline;
 }

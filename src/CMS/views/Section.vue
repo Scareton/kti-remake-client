@@ -1,110 +1,96 @@
 <template>
   <div>
-    <v-row>
-      <v-col cols="3">
-        <sections-list cms />
-
-        <v-card style="margin-top:16px;">
-          <v-card-text>
-            <h3>Особые разделы</h3>
-            <v-list>
-              <v-list-item to="/cms/photoarchive">Фотоархив</v-list-item>
-              <v-list-item to="/cms/links">Управление ссылками</v-list-item>
-            </v-list>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="9">
-        <v-card v-if="post" class="cms-post_post">
-          <v-card-text>
-            <h2 v-if="mode === 'create'">Создание документа</h2>
-            <h2 v-else>Редактирование документа</h2>
-            <v-row>
-              <v-col>
-                <v-text-field label="Заголовок документа" v-model="post.title" @input="titleChanged" :counter="80"></v-text-field>
-              </v-col>
-              <v-col>
-                <v-text-field label="Alias документа" v-model="post.alias" @input="aliasChanged" :rules="[rules.aliasCounter, rules.alias]">
-                  <template v-slot:append>
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{on}">
-                        <v-icon v-on="on" @click="reloadAlias">mdi-reload</v-icon>
-                      </template>
-                      <span>Сгенерировать alias</span>
-                    </v-tooltip>
-                  </template>
-                </v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-text-field :items="sections" disabled label="Родитель документа" v-model="post.path"></v-text-field>
-                <!-- <v-treeview :items="parentsTree"></v-treeview> -->
-              </v-col>
-
-              <v-col>
+    <v-card v-if="post" class="cms-post_post">
+      <v-card-title>
+        <template v-if="mode === 'create'">Создание документа</template>
+        <template v-else>Редактирование документа</template>
+      </v-card-title>
+      <v-divider/>
+      <v-card-text>
+        <v-row>
+          <v-col>
+            <v-text-field label="Заголовок документа" v-model="post.title" @input="titleChanged" :counter="80"></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field label="Alias документа" v-model="post.alias" @input="aliasChanged" :rules="[rules.aliasCounter, rules.alias]">
+              <template v-slot:append>
                 <v-tooltip bottom>
                   <template v-slot:activator="{on}">
-                    <v-text-field v-on="on" label="Ссылка на документ" v-model="post.fullpath" readonly></v-text-field>
+                    <v-icon v-on="on" @click="reloadAlias">mdi-reload</v-icon>
                   </template>
-                  <div>
-                    <span>Формируется на основе полей&nbsp;</span>
-                    <strong>alias</strong> и
-                    <strong>родитель</strong>
-                  </div>
-                  <div>
-                    <i>Не изменяется вручную</i>
-                  </div>
+                  <span>Сгенерировать alias</span>
                 </v-tooltip>
-              </v-col>
-            </v-row>
+              </template>
+            </v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field :items="sections" disabled label="Родитель документа" v-model="post.path"></v-text-field>
+            <!-- <v-treeview :items="parentsTree"></v-treeview> -->
+          </v-col>
 
-            <div v-if="post.path === '/news/'">
-              <v-row>
-                <v-col>
-                  <v-file-input @change="postCoverLoaded" v-model="uploadedCoverFile" :rules="rules.image" accept="image/png, image/jpeg, image/bmp" placeholder="Загрузите обложку для новости" prepend-icon="mdi-camera" label="Обложка"></v-file-input>
-                  <div v-if="postCover" style="max-width:260px;">
-                    <v-img :src="postCover" />
-                  </div>
-                </v-col>
-                <v-col>
-                  <v-select :items="tags" label="Раздел новости" v-model="post.tag"></v-select>
-                </v-col>
-                <v-col v-if="post.tag">
-                  <v-combobox :items="subtags" label="Подраздел новости" :search-input.sync="post.subtag"></v-combobox>
-                </v-col>
-              </v-row>
-              <v-textarea label="Описание документа (Краткое превью)" v-model="post.description"></v-textarea>
-            </div>
+          <v-col>
+            <v-tooltip bottom>
+              <template v-slot:activator="{on}">
+                <v-text-field v-on="on" label="Ссылка на документ" v-model="post.fullpath" readonly></v-text-field>
+              </template>
+              <div>
+                <span>Формируется на основе полей&nbsp;</span>
+                <strong>alias</strong> и
+                <strong>родитель</strong>
+              </div>
+              <div>
+                <i>Не изменяется вручную</i>
+              </div>
+            </v-tooltip>
+          </v-col>
+        </v-row>
 
-            <div style="color: rgba(0, 0, 0, 0.6); font-size: 13px;">Содержание документа:</div>
+        <div v-if="post.path === '/news/'">
+          <v-row>
+            <v-col>
+              <v-file-input @change="postCoverLoaded" v-model="uploadedCoverFile" :rules="rules.image" accept="image/png, image/jpeg, image/bmp" placeholder="Загрузите обложку для новости" prepend-icon="mdi-camera" label="Обложка"></v-file-input>
+              <div v-if="postCover" style="max-width:260px;">
+                <v-img :src="postCover" />
+              </div>
+            </v-col>
+            <v-col>
+              <v-select :items="tags" label="Раздел новости" v-model="post.tag"></v-select>
+            </v-col>
+            <v-col v-if="post.tag">
+              <v-combobox :items="subtags" label="Подраздел новости" :search-input.sync="post.subtag"></v-combobox>
+            </v-col>
+          </v-row>
+          <v-textarea label="Описание документа (Краткое превью)" v-model="post.description"></v-textarea>
+        </div>
 
-            <editor :init="tinymceinit" v-model="post.content"></editor>
+        <div style="color: rgba(0, 0, 0, 0.6); font-size: 13px;">Содержание документа:</div>
 
-            <div class="d-flex systemButtons">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-checkbox v-on="on" v-model="post.visible" label="Видимость в меню"></v-checkbox>
-                </template>
-                <span>Видимость документа в меню (Например, в подвале сайта)</span>
-              </v-tooltip>
+        <editor :init="tinymceinit" v-model="post.content"></editor>
 
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-checkbox v-on="on" v-model="post.published" label="Опубликовано"></v-checkbox>
-                </template>
-                <span>Неопубликованные ресурсы не видны обычным пользователям, но доступны для просмотра и редактирования в cms-post</span>
-              </v-tooltip>
-            </div>
+        <div class="d-flex systemButtons">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-checkbox v-on="on" v-model="post.visible" label="Видимость в меню"></v-checkbox>
+            </template>
+            <span>Видимость документа в меню (Например, в подвале сайта)</span>
+          </v-tooltip>
 
-            <div class="cms-post_post-actions">
-              <v-btn v-if="mode === 'create'" @click="(e) => createResource(e, post)">Создать ресурс</v-btn>
-              <v-btn v-if="mode === 'edit'" @click="(e) => updateResource(e, post)">Сохранить ресурс</v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-checkbox v-on="on" v-model="post.published" label="Опубликовано"></v-checkbox>
+            </template>
+            <span>Неопубликованные ресурсы не видны обычным пользователям, но доступны для просмотра и редактирования в cms-post</span>
+          </v-tooltip>
+        </div>
+
+        <div class="cms-post_post-actions">
+          <v-btn v-if="mode === 'create'" @click="(e) => createResource(e, post)">Создать ресурс</v-btn>
+          <v-btn v-if="mode === 'edit'" @click="(e) => updateResource(e, post)">Сохранить ресурс</v-btn>
+        </div>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -117,7 +103,6 @@ import "tinymce/themes/silver";
 import { mapState } from "vuex";
 export default {
   components: {
-    SectionsList: () => import("@/components/SectionsList"),
     Editor: () => import("@tinymce/tinymce-vue")
     // AliasField: () => import("../components/AliasField")
   },
@@ -258,6 +243,7 @@ export default {
   },
   methods: {
     createResource(e, doc) {
+      this.$store.commit("OPEN_loader");
       let formdata = new FormData();
       for (var key in doc) {
         formdata.append(key, doc[key]);
@@ -265,12 +251,24 @@ export default {
       // Получаем путь к странице без префикса cms-post
       let path = this.$route.path.replace(/^(\/cms-post\/)/, "");
       PostsService.createPost(path, formdata).then(response => {
+        this.$store.commit("CLOSE_loader");
         // Если ответ положительный
         if (response.data.success) {
+          // Обновляем дерево документов
+          this.$store.dispatch("SET_sections");
           // Переходим по ссылке на созданный документ в cms-post
           this.$router.replace({
             path: `/cms-post${response.data.post.fullpath}`
           });
+          this.$store.commit(
+            "OPEN_snackbar_success",
+            "Документ успешно создан"
+          );
+        } else {
+          this.$store.commit(
+            "OPEN_snackbar_error",
+            "Произошла ошибка при создании документа. Попробуйте обновить страницу"
+          );
         }
       });
     },
@@ -286,6 +284,8 @@ export default {
       PostsService.updatePost(path, formdata).then(response => {
         // Если в ответе есть обновлённый документ
         if (response.data.post) {
+          // Обновляем дерево документов
+          this.$store.dispatch("SET_sections");
           // Если адрес документа изменился, переходим по новой ссылке
           if (response.data.post.fullpath !== path)
             this.$router.replace({
@@ -413,5 +413,14 @@ export default {
 }
 .cms-post_post .systemButtons > .v-input {
   margin: 0 12px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.1s ease;
+}
+.fade-enter, .fade-leave-to
+/* .component-fade-leave-active до версии 2.1.8 */ {
+  opacity: 0;
 }
 </style>

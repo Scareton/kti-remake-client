@@ -60,57 +60,8 @@ export default {
       sections: state => state.sections
     }),
     parentsTree() {
-      // Копируем секции в отдельный объект
-      let data;
-      if (this.items) data = this.items;
-      else data = JSON.parse(JSON.stringify(this.sections));
-
-      // Сортируем секции по названию
-      data.sort(compare);
-
-      let tree = (function(array) {
-        let result = [];
-        let o = { _: result }; // Объект, используемый в качестве первого аргумента при первом вызове функции callback в reduce
-
-        array
-          .filter(item => item.fullpath)
-          .forEach(function(a) {
-            // Разделяем текстовый путь секции на части
-            let splitted = a.fullpath.split("/");
-
-            // Обработка случая, когда последний элемент - слеш. Нужно для корректного отображения родительских страниц
-            // Удаляется лишний элемент массива
-            splitted.forEach((node, n) => {
-              if (n > 0 && node === "") splitted.splice(n, 1);
-            });
-
-            let max = splitted.length - 1;
-
-            // Собираем древовидный объект
-            splitted.reduce(function(r, b, index) {
-              if (!r[b]) {
-                r[b] = { _: [] };
-
-                let obj = { name: b, children: r[b]._ };
-
-                if (max === index) {
-                  obj.id = a._id; // Уникальный идентификатор
-                  obj.name = a.title; // Название раздела
-                  obj.fullpath = a.fullpath; // Ссылка на раздел
-                }
-
-                r._.push(obj);
-              }
-              return r[b];
-            }, o);
-          });
-        return result;
-      })(data);
-
-      // Удаляем первый (пустой) элемент и возвращаем древовидный объект
-      if (this.items) tree = tree[0].children[0].children;
-      else tree = tree[0].children;
-      return tree;
+      if (!this.items) return this.$store.getters.sectionsTree;
+      else return this.$store.getters.itemsTree(this.items)[0].children
     },
     filter() {
       return this.caseSensitive

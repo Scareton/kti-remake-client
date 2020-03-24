@@ -24,7 +24,7 @@ const routes = [
         children: [
           {
             path: "/cms",
-            component: () => import("../CMS/views/Section.vue"),
+            component: () => import("../CMS/views/Home.vue"),
           },
           {
             path: "/cms/photoarchive",
