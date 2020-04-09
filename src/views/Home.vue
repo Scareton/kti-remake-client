@@ -20,60 +20,81 @@
 
         <v-row class="ma-0 hello-dialog--row">
           <v-col class="pa-0">
-            <div>
-              <v-list>
-                <v-subheader class="title">Технологии</v-subheader>
-                <v-list-item @click="openLink('https://ru.vuejs.org/')">
-                  <v-list-item-icon>
-                    <img src="icons/vue.png" />
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>Vue.js</v-list-item-title>
-                    <v-list-item-subtitle>JavaScript фреймворк</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
+            <v-list>
+              <v-subheader class="title">Технологии</v-subheader>
+              <v-list-item @click="openLink('https://ru.vuejs.org/')">
+                <v-list-item-icon>
+                  <img src="icons/vue.png" />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Vue.js</v-list-item-title>
+                  <v-list-item-subtitle>JavaScript фреймворк</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-                <v-list-item @click="openLink('https://vuetifyjs.com/ru/')">
-                  <v-list-item-icon>
-                    <img src="icons/vuetify.png" />
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>Vuetify</v-list-item-title>
-                    <v-list-item-subtitle>Material Design дизайн-система для vue.js приложений</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
+              <v-list-item @click="openLink('https://vuetifyjs.com/ru/')">
+                <v-list-item-icon>
+                  <img src="icons/vuetify.png" />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Vuetify</v-list-item-title>
+                  <v-list-item-subtitle>Material Design дизайн-система для vue.js приложений</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-                <v-list-item @click="openLink('https://nodejs.org/en/')">
-                  <v-list-item-icon>
-                    <img src="icons/node.png" />
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>Node.js</v-list-item-title>
-                    <v-list-item-subtitle>Среда выполнения JavaScript на стороне сервера</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
+              <v-list-item @click="openLink('https://nodejs.org/en/')">
+                <v-list-item-icon>
+                  <img src="icons/node.png" />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Node.js</v-list-item-title>
+                  <v-list-item-subtitle>Среда выполнения JavaScript на стороне сервера</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-                <v-list-item @click="openLink('https://expressjs.com/ru/')">
-                  <v-list-item-icon>
-                    <img src="icons/express.png" />
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>Express</v-list-item-title>
-                    <v-list-item-subtitle>Фреймворк для приложений Node.js</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
+              <v-list-item @click="openLink('https://expressjs.com/ru/')">
+                <v-list-item-icon>
+                  <img src="icons/express.png" />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Express</v-list-item-title>
+                  <v-list-item-subtitle>Фреймворк для приложений Node.js</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-                <v-list-item @click="openLink('https://www.mongodb.com/')">
-                  <v-list-item-icon>
-                    <img src="icons/mongo.png" />
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>MongoDB</v-list-item-title>
-                    <v-list-item-subtitle>NoSQL система управления базами данных</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </div>
+              <v-list-item @click="openLink('https://www.mongodb.com/')">
+                <v-list-item-icon>
+                  <img src="icons/mongo.png" />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>MongoDB</v-list-item-title>
+                  <v-list-item-subtitle>NoSQL система управления базами данных</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+            <v-divider />
+            <v-list>
+              <v-subheader class="title">GitHub репозитории</v-subheader>
+              <v-list-item @click="openLink('https://github.com/Scareton/kti-remake-client')">
+                <v-list-item-icon>
+                  <img src="icons/github32.png" />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Клиент</v-list-item-title>
+                  <v-list-item-subtitle>Scareton/kti-remake-client</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item @click="openLink('https://github.com/Scareton/kti-remake-server')">
+                <v-list-item-icon>
+                  <img src="icons/github32.png" />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Сервер</v-list-item-title>
+                  <v-list-item-subtitle>Scareton/kti-remake-server</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
           </v-col>
           <v-divider vertical />
           <v-col class="pa-0 pt-2">
