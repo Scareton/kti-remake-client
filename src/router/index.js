@@ -81,4 +81,11 @@ const router = new VueRouter({
   }
 });
 
+router.beforeEach((to, from, next) => {
+  let title;
+  title = to.meta.title || to.name;
+  document.title = title ? title : "Камышинский технологический институт"
+  next()
+})
+
 export default router;

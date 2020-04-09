@@ -5,7 +5,7 @@
         <h1>Система управления контентом КТИ</h1>
       <!-- </v-card> -->
       <v-row>
-        <v-col cols="3">
+        <v-col cols="3" class="">
           <sections-list cms />
 
           <v-card style="margin-top:16px;">

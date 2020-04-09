@@ -2,7 +2,7 @@
   <div class="footer">
     <v-container>
       <v-row class="caption">
-        <v-col cols="3" class>
+        <v-col :cols="width < 769 ? '12' : '3'" class>
           <p class="title">© 2004 — 2020</p>
           <p class="overline">403874 Волгоградская обл., г. Камышин, ул. Ленина 6а</p>
           <p>
@@ -31,10 +31,10 @@
             <a href="mailto:kti@kti.ru">kti@kti.ru</a>
           </p>
         </v-col>
-        <v-col cols="9">
+        <v-col :cols="width < 769 ? '12' : '9'">
           <v-row>
             <!-- Динамический вывод разделов. Разделы определяются в переменной sections -->
-            <v-col class="psmallmg" v-for="(section, index) in sections" :key="index">
+            <v-col class="psmallmg" v-for="(section, index) in sections" :key="index" :cols="width < 426 ? '12' : ''">
               <p class="title">{{section.name}}</p>
               <p v-for="(post, key) in section.posts" :key="key">
                 <router-link :to="post.fullpath">{{post.title}}</router-link>
@@ -67,32 +67,32 @@ export default {
         path: "/science/",
         posts: []
       }
-    }
+    },
+    width: window.innerWidth
   }),
   methods: {
     getPosts() {
-      // Формируем строку вида "/science/,/education/,/about/" для запроса документов по разделам
-      let sectionsString = "";
-      sectionsString = Object.keys(this.sections)
-        .map(key => this.sections[key].path)
-        .join(",");
-
-      // Выполняем запрос по разделам
-      PostsService.getNavigation(sectionsString).then(response => {
-        if (response.data) {
-          var posts = response.data.posts;
-
-          // Заполняем массивы документов по разделам
-          for (let key in this.sections) {
-            let item = this.sections[key];
-            item.posts = posts.filter(post => post.path === item.path);
-          }
-        }
-      });
+      let sections = this.sections;
+      for (const i in sections) {
+        PostsService.getChilds(sections[i].path)
+          .then(response => {
+            this.$set(this.sections[i], "posts", response.data.posts);
+          })
+          .catch(err => {
+            this.$store.commit(
+              "OPEN_snackbar_error",
+              "Произошла ошибка во время получения разделов. Попробуйте обновить страницу"
+            );
+          });
+      }
+    },
+    updateWidth() {
+      this.width = window.innerWidth;
     }
   },
   created() {
     this.getPosts();
+    window.addEventListener("resize", this.updateWidth);
   }
 };
 </script>
@@ -107,5 +107,7 @@ export default {
 }
 .v-application .psmallmg p {
   margin-bottom: 8px;
+}
+@media (max-width: 768px) {
 }
 </style>

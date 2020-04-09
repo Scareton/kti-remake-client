@@ -83,6 +83,7 @@ function setFullPath(item) {
 
 export default new Vuex.Store({
   state: {
+    homeDialog: true,
     posts: null,
     sections: null,
     sectionsTree: [],
@@ -118,6 +119,9 @@ export default new Vuex.Store({
   },
   mutations: {
     // Системные мутации
+    CHECK_homeDialog: (state) => {
+      state.homeDialog = false;
+    },
     OPEN_snackbar_error: (state, payload) => {
       // Сообщение с отрицательным сигналом \ ошибка
       state.system.snackbar = {

@@ -4,7 +4,7 @@
       <h4>Загрузить фото</h4>
     </v-expansion-panel-header>
     <v-expansion-panel-content>
-      <v-file-input multiple show-size counter accept="image/png, image/jpeg, image/bmp" v-model="uploadedValue" @change="uploadedChanged" label="Выберите фотографии">
+      <v-file-input ref="loadButton" multiple show-size counter accept="image/png, image/jpeg, image/bmp" v-model="uploadedValue" @change="uploadedChanged" label="Выберите фотографии">
         <template v-slot:selection="{ text }">
           <v-chip small label color="primary">{{ text }}</v-chip>
         </template>
@@ -103,6 +103,11 @@ export default {
         PhotoService.uploadAlbumPhotos(alias, formdata).then(response => {
           if (response.data.success) {
             this.$router.replace(`/cms/photoarchive/${alias}`);
+            this.$set(this.$refs.loadButton, "initialValue", []);
+            this.$set(this.$refs.loadButton, "lazyValue", []);
+            this.uploadedValue = [];
+            this.previews = []
+            this.$emit("loaded");
           }
         });
       }

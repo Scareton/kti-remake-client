@@ -265,40 +265,35 @@ export default {
       for (var key in doc) {
         formdata.append(key, doc[key]);
       }
-      // Получаем путь к странице без префикса cms-post
-      let path = this.$route.path.replace(/^(\/cms-post\/)/, "");
-      PostsService.createPost(path, formdata).then(response => {
-        this.$store.commit("CLOSE_loader");
-        // Если ответ положительный
-        if (response.data.success) {
+      let path = this.post.fullpath;
+      PostsService.createPost(path, formdata)
+        .then(response => {
+          this.$store.commit("CLOSE_loader");
+          // Если ответ положительный
           // Обновляем дерево документов
           this.$store.dispatch("SET_sections");
           // Переходим по ссылке на созданный документ в cms-post
           this.$router.replace({
-            path: `/cms-post${response.data.post.fullpath}`
+            path: `/cms-post${response.data.fullpath}`
           });
           this.$store.commit(
             "OPEN_snackbar_success",
             "Документ успешно создан"
           );
-        } else {
-          this.$store.commit(
-            "OPEN_snackbar_error",
-            "Произошла ошибка при создании документа. Попробуйте обновить страницу"
-          );
-        }
-      });
+        })
+        .catch(err => {
+          this.$store.commit("CLOSE_loader");
+          this.$store.commit("OPEN_snackbar_error", err);
+        });
     },
     updateResource(e, doc) {
       let formdata = new FormData();
       for (var key in doc) {
         formdata.append(key, doc[key]);
       }
-      // Получаем путь к странице без префикса cms-post
-      let path = this.$route.path.replace(/^(\/cms-post\/)/, "");
 
       // Запрашиваем обновление документа у сервера
-      PostsService.updatePost(path, formdata).then(response => {
+      PostsService.updatePost(formdata).then(response => {
         // Если в ответе есть обновлённый документ
         if (response.data.post) {
           // Обновляем дерево документов
@@ -313,9 +308,9 @@ export default {
     },
     removeResource(doc) {
       // Получаем путь к странице без префикса cms-post
-      let path = this.$route.path.replace(/^(\/cms-post\/)/, "");
+      let _id = this.post._id;
       this.$store.commit("OPEN_loader");
-      PostsService.removePost(path).then(response => {
+      PostsService.removePost(_id).then(response => {
         this.$store.commit("CLOSE_loader");
         if (response.data.success) {
           this.$router.push("/cms");
@@ -363,7 +358,7 @@ export default {
         this.uploadedCoverFile = null;
         this.postCover = null;
         // Получаем путь к странице без префикса cms-post
-        let path = value.path.replace(/^(\/cms-post\/)/, "");
+        let path = value.path.replace(/^(\/cms-post\/)/, "/");
         // Если true - обновляем состояние на выбранный пост из базы
         let needToSetPost = true;
 
@@ -372,10 +367,11 @@ export default {
           // Обработка создания документа
           if (value.query.mode === "create") {
             this.mode = "create";
+            if (path !== "/") path = "/" + path;
             this.post = new Object({
               title: "",
               content: "",
-              path: "/" + path,
+              path: path,
               alias: "",
               aliasGen: false,
               visible: false,
@@ -400,7 +396,7 @@ export default {
             this.mode = null;
             this.post = null;
             if (response.data.post) {
-              this.post = response.data.post;
+              this.post = response.data.post[0];
               this.post.images = [];
 
               if (response.data.post.cover) {
@@ -418,10 +414,15 @@ export default {
     post: {
       // Отслеживаем изменения в документе и обновляем поля
       handler(value) {
+        console.log(value._id);
         // Полный путь к документу вычисляется при сложении пути к родителю и alias
         if (value.path[value.path.length - 1] !== "/") value.path += "/";
 
-        this.$set(this.post, "fullpath", value.path + value.alias);
+        this.$set(
+          this.post,
+          "fullpath",
+          this.GlobalMethods.url_checkSlash(value.path + value.alias)
+        );
         // Alias заполняется транслитизированным title
         if (this.mode === "create") {
           // this.$set(this.post, "alias", slugify(this.post.title));

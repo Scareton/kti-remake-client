@@ -3,7 +3,7 @@
     <div class="homeside-resources">
       <v-list>
         <v-subheader class="title">Ресурсы</v-subheader>
-        <v-list-item dense active-class=" " v-for="link in links" :key="link._id" :to="link.fullpath">{{link.title}}</v-list-item>
+        <v-list-item dense class="pt-2 pb-2" active-class=" " v-for="link in links" :key="link._id" :to="link.fullpath">{{link.title}}</v-list-item>
       </v-list>
     </div>
 

@@ -34,6 +34,14 @@ export default {
       albums: state => state.cms_albums
     })
   },
+  watch: {
+    $route: {
+      handler(value) {
+        this.mode = value.query.mode;
+      },
+      immediate: TextTrackCueList
+    }
+  }
 };
 </script>
 

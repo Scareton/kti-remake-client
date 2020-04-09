@@ -4,7 +4,7 @@
       <v-sheet class="pa-4 primary">
         <v-text-field v-model="search" label="Поиск..." dark flat solo-inverted hide-details clearable clear-icon="mdi-close-circle-outline"></v-text-field>
       </v-sheet>
-      <v-treeview :items="parentsTree" :open="open" :active.sync="selected" :filter="filter" :search="search" hoverable activatable return-object @update:active="resourceChanged">
+      <v-treeview :items="items ? parentsTreeItems : parentsTree" :open="open" :active.sync="selected" :filter="filter" :search="search" hoverable activatable return-object @update:active="resourceChanged">
         <template v-slot:prepend="{ item, open }">
           <v-icon v-if="item.children[0]">{{ open ? 'mdi-folder-open' : 'mdi-folder' }}</v-icon>
           <v-icon v-else>mdi-file</v-icon>
@@ -59,9 +59,15 @@ export default {
     ...mapState({
       sections: state => state.sections
     }),
+    parentsTreeItems() {
+      if (this.$store.getters.itemsTree(this.items)[0].children)
+        return this.$store.getters.itemsTree(this.items)[0].children;
+      else return null;
+    },
     parentsTree() {
-      if (!this.items) return this.$store.getters.sectionsTree;
-      else return this.$store.getters.itemsTree(this.items)[0].children
+      return this.$store.getters.sectionsTree;
+      // if (!this.items) return this.$store.getters.sectionsTree;
+      // else return this.$store.getters.itemsTree(this.items)[0].children
     },
     filter() {
       return this.caseSensitive
@@ -82,9 +88,9 @@ export default {
     createResource(item) {
       this.selected = [];
       let path;
-      if (!item) path = '/cms-post/';
+      if (!item) path = "/cms-post/";
       else path = `/cms-post${item.fullpath}`;
-      
+
       this.$router
         .push({ path: path, query: { mode: "create" } })
         .catch(err => {

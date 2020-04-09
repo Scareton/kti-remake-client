@@ -9,7 +9,7 @@
               <router-link to="/">Камышинский технологический институт</router-link>
             </div>
             <div>
-              <div class style="font-size:9px; color:rgba(255, 255, 255, 0.65);">
+              <div class="slogan" style="font-size:9px; color:rgba(255, 255, 255, 0.65);">
                 (филиал) федерального государственного бюджетного
                 образовательного учреждения высшего образования «Волгоградский
                 государственный технический университет»
@@ -18,7 +18,7 @@
           </div>
         </div>
 
-        <div class="d-flex align-center header-block">
+        <div class="d-flex align-center header-block navigation-wrapper">
           <div class="navigation">
             <router-link class="nav-link" to="/education/">Образование</router-link>
             <router-link class="nav-link" to="/about/">Об институте</router-link>
@@ -26,7 +26,7 @@
           </div>
         </div>
 
-        <div class="d-flex align-center header-block">
+        <div class="d-flex align-center header-block search-block">
           <!-- TODO Рабочий поиск -->
           <v-text-field hide-details append-icon="mdi-magnify" single-line placeholder="Поиск..."></v-text-field>
         </div>
@@ -147,5 +147,40 @@ body {
 .v-application h1 > a:hover,
 .v-application .v-subheader > a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 1263px) {
+  .navigation {
+    display: none;
+  }
+}
+@media (max-width: 768px) {
+  .brand .slogan {
+    display: none;
+  }
+}
+@media (max-width: 599px) {
+  .container.container-header {
+    flex-wrap: wrap;
+  }
+  .v-app-bar.v-app-bar--fixed {
+    height: 96px !important;
+  }
+  .v-content {
+    padding: 96px 0px 0px !important;
+  }
+}
+@media (max-width: 425px) {
+  .navigation-wrapper {
+    margin: 0;
+  }
+  .search-block {
+    width: 100%;
+    margin-top: 11px;
+  }
+  .v-application .brand .title {
+    font-size: 0.95rem !important;
+    line-height: 1.2 !important;
+  }
 }
 </style>

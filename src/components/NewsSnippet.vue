@@ -51,7 +51,7 @@ export default {
     getPosts() {
       this.busy = true;
       // Указываем путь (раздел), отступ и лимит для подгрузки статей
-      PostsService.getPostsOffset(this.path, this.offset, this.limit).then(
+      PostsService.getChilds(this.path, this.offset, this.limit).then(
         response => {
           // Добавляем полученные статьи к уже имеющимся
           this.news = this.news.concat(response.data.posts);
@@ -132,5 +132,18 @@ export default {
 .news-snippet .news-items .news-item .news-item-cover {
   width: 100%;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .news-snippet .news-items .news-item {
+    flex: 1 1 50%;
+    max-width:50%;
+  }
+}
+@media (max-width: 425px) {
+  .news-snippet .news-items .news-item {
+    flex: 1 1 100%;
+    max-width:100%;
+  }
 }
 </style>

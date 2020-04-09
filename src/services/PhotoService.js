@@ -11,5 +11,11 @@ export default {
   },
   uploadAlbumPhotos(path, body) {
     return api().post(`photo/albums/${path}`, body)
+  },
+  removeAlbumPhoto(_id) {
+    return api().delete(`photo/${_id}`)
+  },
+  updateAlbumPhoto(_id, data) {
+    return api().put(`photo/${_id}`, data)    
   }
 };

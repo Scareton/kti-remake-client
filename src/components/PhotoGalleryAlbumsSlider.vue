@@ -25,9 +25,7 @@ export default {
   methods: {
     getAlbumsPreviews() {
       PhotoService.getAlbumsPreviews().then(response => {
-        if (response.data.success) {
-          this.albums = response.data.albums;
-        }
+        this.albums = response.data.albums;
       });
     }
   },

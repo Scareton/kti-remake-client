@@ -61,4 +61,24 @@ export default {
   border-bottom: 2px solid #d4ae08;
   margin-bottom:6px;
 }
+
+@media (max-width: 959px) {
+  .slide-description > .container {
+    padding: 0;
+  }
+  .slide-description .title,
+  .slide-description .body-1 {
+    padding: 12px;
+  }
+}
+@media (max-width: 425px) {
+  .slide-description .title {
+    font-size: 1rem !important;
+    line-height: 1.2;
+  }
+  .slide-description .body-1 {
+    font-size: 0.9rem !important;
+    line-height: 1.2;
+  }
+}
 </style>
