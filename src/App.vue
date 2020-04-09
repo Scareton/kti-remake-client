@@ -27,8 +27,8 @@
         </div>
 
         <div class="d-flex align-center header-block search-block">
-          <!-- TODO Рабочий поиск -->
-          <v-text-field hide-details append-icon="mdi-magnify" single-line placeholder="Поиск..."></v-text-field>
+          <v-autocomplete v-model="select" @change="searchSelected" :loading="loading" :items="items" :search-input.sync="search" cache-items single-line hide-no-data hide-details label="Поиск..."></v-autocomplete>
+          <!-- <v-text-field hide-details append-icon="mdi-magnify" single-line placeholder="Поиск..."></v-text-field> -->
         </div>
       </v-container>
     </v-app-bar>
@@ -59,10 +59,17 @@
 </template>
 
 <script>
+import PostsService from "./services/PostsService";
 import Footer from "@/components/Footer";
 export default {
   name: "App",
   components: { Footer },
+  data: () => ({
+    loading: false,
+    items: [],
+    search: null,
+    select: null
+  }),
   computed: {
     snackbar: {
       get() {
@@ -81,7 +88,30 @@ export default {
       }
     }
   },
-  methods: {},
+  methods: {
+    querySelections(v) {
+      this.loading = true;
+      PostsService.search(v).then(response => {
+        if (response.data.posts) {
+          this.loading = false;
+          this.items = response.data.posts.map(item => {
+            return {value: item.fullpath, text: item.title}
+          });
+        } else {
+          this.loading = false;
+          this.items = [];
+        }
+      });
+    },
+    searchSelected(path) {
+      this.$router.push(path)
+    }
+  },
+  watch: {
+    search(val) {
+      val && val !== this.select && this.querySelections(val);
+    }
+  },
   created() {
     this.$store.dispatch("SET_sections");
   }

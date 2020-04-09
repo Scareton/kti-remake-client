@@ -18,6 +18,9 @@ export default {
   removePost(_id) {
     return api().delete(`post/remove?_id=${_id}`)
   },
+  search(search) {
+    return api().get(`search?search=${search}`)
+  },
 
 
   getPostsOffset(path, offset, limit) {
